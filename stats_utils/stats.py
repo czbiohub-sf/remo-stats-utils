@@ -13,7 +13,7 @@ from yogo.constants import (
 
 # TODO rerun early termination
 
-class StatsUtils:
+class StatsParser:
     def __init__(self):
         self.matrix_dim = len(YOGO_CLASS_LIST)
 
