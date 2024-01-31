@@ -3,8 +3,8 @@ import numpy.typing as npt
 
 from typing import List, Tuple
 
-from ulc_mm_package.neural_nets.neural_network_constants import (
-    YOGO_CLASS_LIST,
+from yogo.data import YOGO_CLASS_ORDERING
+from yogo.constants import (
     RBC_CLASS_IDS,
     ASEXUAL_PARASITE_CLASS_IDS,
     YOGO_CMATRIX_MEAN_DIR,
