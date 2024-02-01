@@ -1,6 +1,8 @@
 from yogo.data import YOGO_CLASS_ORDERING
 from pathlib import Path
 
+from typing import Dict, List
+
 
 # Paths to data files
 curr_dir = Path(__file__).parent.resolve()
@@ -26,3 +28,6 @@ PARASITE_CLASS_IDS: List[int] = [
     YOGO_CLASS_IDX_MAP["schizont"],
     YOGO_CLASS_IDX_MAP["gametocyte"],
 ]
+
+# Parasitemia unit conversion
+PERCENT_2_PARASITES_PER_UL = 5E6 # parasites/uL = parasitemia % x 5E6
