@@ -32,7 +32,7 @@ class Deskewer:
 
     def calc_res(
         self, raw_counts: npt.NDArray, units_ul: bool=False 
-    ) -> Tuple[float, List[float]]:
+    ) -> Tuple[float, float, npt.NDArray]:
         """
         Return 95% confidence bound for parasitemia, 95% confidence bound, and deskewed counts
         See remoscope manuscript for full derivation
