@@ -34,7 +34,7 @@ class Deskewer:
         self, raw_counts: npt.NDArray, units_ul: bool=False 
     ) -> Tuple[float, float, npt.NDArray]:
         """
-        Return 95% confidence bound for parasitemia, 95% confidence bound, and deskewed counts
+        Return parasitemia, 95% confidence bound, and deskewed counts
         See remoscope manuscript for full derivation
 
         95% confidence interval can be defined as
