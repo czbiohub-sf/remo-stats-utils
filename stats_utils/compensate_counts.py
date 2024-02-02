@@ -7,7 +7,7 @@ Based on clinical Uganda data
 import numpy as np
 import numpy.typing as npt
 
-from typing import Tuple
+from typing import Tuple, Union
 
 from stats_utils.constants import (
     YOGO_COMPENSATION_CSV_DIR,
@@ -78,7 +78,7 @@ class CountCompensator(CountCorrector):
         return np.array([[M11, M12], [M21, M22]])
 
     def get_res_from_parasitemia(
-        self, parasitemia: float, rbcs: float, units_ul_in: bool, units_ul_out: bool=False
+        self, parasitemia: float, rbcs: Union[int, float], units_ul_in: bool, units_ul_out: bool=False
     ) -> Tuple[float, float]:
         """
         Return parasitemia and 95% confidence bound based on parasitemia and total rbcs
@@ -90,7 +90,6 @@ class CountCompensator(CountCorrector):
             upper_bound = min(1, parasitemia + bound)
         """
         
-        # TODO does IJ know number of RBCs???
         if units_ul_in:
             parasitemia /= PARASITES_P_UL_PER_PERCENT
         parasitemia_fraction = parasitemia / 100.0
@@ -100,4 +99,6 @@ class CountCompensator(CountCorrector):
         healthy = rbcs - parasites
         counts = [healthy, parasites]
 
-        self.get_res_from_counts(counts, units_ul_out=units_ul_out)
+        _, bound = self.get_res_from_counts(counts, units_ul_out=units_ul_out)
+
+        return self.get_95_confidence_bound(parasitemia, bound)

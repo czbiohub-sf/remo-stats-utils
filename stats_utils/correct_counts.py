@@ -96,10 +96,6 @@ class CountCorrector:
         Return parasitemia and 95% confidence bound based on class counts
 
         See remoscope manuscript for full derivation
-
-        95% confidence interval can be defined as
-            lower_bound = max(0, parasitemia - bound)
-            upper_bound = min(1, parasitemia + bound)
         """
         # Correct counts
         corrected_counts = self.correct_counts(raw_counts)
@@ -121,3 +117,12 @@ class CountCorrector:
             return parasitemia * PARASITES_P_UL_PER_PERCENT, bound * PARASITES_P_UL_PER_PERCENT
         else:
             return parasitemia, bound
+
+    def get_95_confidence_bound(self, parasitemia: float, bound: float) -> Tuple[float, float]:
+        """
+        Return 95% confidence bound on parasitemia estimate
+        """
+        lower_bound = max(0, parasitemia - bound)
+        upper_bound = parasitemia + bound
+    
+        return lower_bound, upper_bound
