@@ -7,7 +7,8 @@ import numpy.typing as npt
 from typing import List, Tuple, Union
 from abc import ABC, abstractmethod
 
-from yogo.data import YOGO_CLASS_ORDERING, PARASITES_P_UL_PER_PERCENT
+from yogo.data import YOGO_CLASS_ORDERING
+from stats_utils.constants import PARASITES_P_UL_PER_PERCENT
 
 
 class CountCorrector:
@@ -70,7 +71,7 @@ class CountCorrector:
         """
         rbcs = np.sum(corrected_counts[self.rbc_ids])
         if parasites is None:
-            parasites = np.sum(corrected_counts[self.parasite_ids])å
+            parasites = np.sum(corrected_counts[self.parasite_ids])
 
         return 0 if rbcs == 0 else parasites / rbcs
 

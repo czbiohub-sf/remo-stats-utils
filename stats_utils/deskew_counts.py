@@ -11,6 +11,7 @@ from stats_utils.constants import (
     YOGO_CMATRIX_MEAN_DIR,
     YOGO_INV_CMATRIX_STD_DIR,
 )
+from stats_utils.correct_counts import CountCorrector
 
 
 class CountDeskewer(CountCorrector):
@@ -22,7 +23,7 @@ class CountDeskewer(CountCorrector):
         # Compute inverse
         inv_cmatrix = np.linalg.inv(norm_cmatrix)
 
-        super(CountCompensator, self).__init__(
+        super(CountDeskewer, self).__init__(
             inv_cmatrix,
             inv_cmatrix_std,
             RBC_CLASS_IDS,

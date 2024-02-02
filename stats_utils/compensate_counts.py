@@ -14,9 +14,10 @@ from stats_utils.constants import (
     CONFIDENCE_THRESHOLD,
     PARASITES_P_UL_PER_PERCENT
 )
+from stats_utils.correct_counts import CountCorrector
 
 
-class CountCompensator:
+class CountCompensator(CountCorrector):
     def __init__(self):
         m, b, cov_m, cov_b = self.get_fit_metrics()
         inv_cmatrix = self.get_matrix(m, b)
