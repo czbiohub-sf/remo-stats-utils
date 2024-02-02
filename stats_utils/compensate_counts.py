@@ -77,11 +77,11 @@ class CountCompensator(CountCorrector):
 
         return np.array([[M11, M12], [M21, M22]])
 
-    def get_95_confidence_bounds_from_parasitemia(
-        self, parasitemia: float, rbcs: Union[int, float], units_ul_in: bool, units_ul_out: bool=False
-    ) -> Tuple[float, float]:
+    def get_95_bound_and_compensation_from_parasitemia(
+        self, raw_parasitemia: float, rbcs: Union[int, float], units_ul_in: bool, units_ul_out: bool=False
+    ) -> Tuple[float, List[float]]:
         """
-        Return parasitemia and 95% confidence bound based on parasitemia and total rbcs
+        Return compensated parasitemia and 95% confidence bound based on raw parasitemia and total rbcs
 
         See remoscope manuscript for full derivation
 
@@ -91,14 +91,14 @@ class CountCompensator(CountCorrector):
         """
         
         if units_ul_in:
-            parasitemia /= PARASITES_P_UL_PER_PERCENT
-        parasitemia_fraction = parasitemia / 100.0
+            raw_parasitemia /= PARASITES_P_UL_PER_PERCENT
+        parasitemia_fraction = raw_parasitemia / 100.0
         
         # Compute counts based on parasitemia and rbcs
         parasites = parasitemia_fraction * rbcs
         healthy = rbcs - parasites
         counts = [healthy, parasites]
 
-        _, bound = self.get_res_from_counts(counts, units_ul_out=units_ul_out)
+        compensated_parasitemia, bound = self.get_res_from_counts(counts, units_ul_out=units_ul_out)
 
-        return self.get_95_confidence_bound(parasitemia, bound)
+        return compensated_parasitemia, self.get_95_confidence_bound(compensated_parasitemia, bound)

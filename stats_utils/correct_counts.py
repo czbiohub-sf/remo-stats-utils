@@ -125,4 +125,4 @@ class CountCorrector:
         lower_bound = max(0, parasitemia - bound)
         upper_bound = parasitemia + bound
     
-        return lower_bound, upper_bound
+        return [lower_bound, upper_bound]
