@@ -9,6 +9,7 @@ from abc import ABC, abstractmethod
 
 from yogo.data import YOGO_CLASS_ORDERING
 
+
 class CountCorrector:
     def __init__(self, inv_cmatrix: npt.NDArray, inv_cmatrix_std: npt.NDArray, parasite_ids: List[int], rbc_ids: List[int]):
         self.inv_cmatrix = inv_cmatrix
