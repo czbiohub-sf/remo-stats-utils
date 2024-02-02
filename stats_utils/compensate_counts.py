@@ -19,7 +19,7 @@ from stats_utils.constants import (
     CONFIDENCE_THRESHOLD,
 )
 
-class Compensator:
+class CountCompensator:
     def __init__(self):
         m, b, cov_m, cov_b = self.get_fit_metrics()
         self.matrix = self.get_matrix(m, b)

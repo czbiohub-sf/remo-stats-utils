@@ -19,7 +19,7 @@ from stats_utils.constants import (
 )
 
 
-class Deskewer:
+class CountDeskewer:
     def __init__(self):
         self.matrix_dim = len(YOGO_CLASS_ORDERING)
 

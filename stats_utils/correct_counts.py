@@ -9,7 +9,7 @@ from abc import ABC, abstractmethod
 
 from yogo.data import YOGO_CLASS_ORDERING
 
-class Corrector:
+class CountCorrector:
     def __init__(self):
         pass
     
