@@ -4,18 +4,21 @@ Base class for correcting YOGO class counts
 import numpy as np
 import numpy.typing as npt
 
-from typing import List, Tuple
+from typing import List, Tuple, Union
 from abc import ABC, abstractmethod
 
 from yogo.data import YOGO_CLASS_ORDERING, PERCENT_2_PARASITES_PER_UL
 
 
 class CountCorrector:
-    def __init__(self, inv_cmatrix: npt.NDArray, inv_cmatrix_std: npt.NDArray, parasite_ids: List[int], rbc_ids: List[int]):
+    def __init__(
+        self, inv_cmatrix: npt.NDArray, inv_cmatrix_std: npt.NDArray, rbc_ids: List[int], parasite_ids: List[int],
+    ):
         self.inv_cmatrix = inv_cmatrix
         self.inv_cmatrix_std = inv_cmatrix_std
-        self.parasite_ids = parasite_ids
+        
         self.rbc_ids = rbc_ids
+        self.parasite_ids = parasite_ids
     
     def correct_counts(self, counts: npt.NDArray, matrix: npt.NDArray):
         """
@@ -61,21 +64,25 @@ class CountCorrector:
         """
         return np.matmul(np.square(raw_counts), np.square(self.inv_cmatrix_std))
 
-    def calc_parasitemia(self, corrected_counts: npt.NDArray) -> float:
+    def calc_parasitemia(self, corrected_counts: npt.NDArray, parasites: Union[None, float]=None) -> float:
         """
         Return total parasitemia count
         """
-        parasites = np.sum(corrected_counts[self.parasite_ids])
         rbcs = np.sum(corrected_counts[self.rbc_ids])
+        if parasites is None:
+            parasites = np.sum(corrected_counts[self.parasite_ids])å
+
         return 0 if rbcs == 0 else parasites / rbcs
 
-    def calc_parasitemia_rel_err(self, corrected_counts: npt.NDArray, count_vars: npt.NDArray) -> float:
+    def calc_parasitemia_rel_err(self, corrected_counts: npt.NDArray, count_vars: npt.NDArray, parasites: Union[None, float]=None) -> float:
         """
         Return relative uncertainty of total parasitemia count
 
         See remoscope manuscript for full derivation
         """
-        parasites = np.sum(corrected_counts[self.parasite_ids])
+        if parasites is None:
+            parasites = np.sum(corrected_counts[self.parasite_ids])
+
         parasite_count_vars = count_vars[self.parasite_ids]
 
         # Compute error
@@ -92,22 +99,31 @@ class CountCorrector:
             lower_bound = max(0, parasitemia - bound)
             upper_bound = min(1, parasitemia + bound)
         """
-        # Deskew
+        # Correct counts
         corrected_counts = self.correct_counts(raw_counts)
+        parasites = np.sum(corrected_counts[self.parasite_ids])
 
         # Calc_parasitemia
-        parasitemia = calc_parasitemia(corrected_counts)
+        parasitemia = calc_parasitemia(corrected_counts, parasites=parasites)
         
         # Get uncertainties
         count_vars = self.calc_count_vars(raw_counts)
 
         # Use rule of 3 if there are no parasites
-        if parasitemia == 0:
+        if  parasites == 0:
             bound = 3 / corrected_counts[YOGO_CLASS_IDX_MAP["healthy"]]
         else:
-            bound = 1.69 * self.calc_parasitemia_rel_err(corrected_counts, count_vars)
+            bound = 1.69 * self.calc_parasitemia_rel_err(corrected_counts, count_vars,  parasites=parasites)
 
         if units_ul:
-            return parasitemia * PERCENT_2_PARASITES_PER_UL, bound * PERCENT_2_PARASITES_PER_UL, corrected_counts
+            return (
+                parasitemia * PERCENT_2_PARASITES_PER_UL,
+                bound * PERCENT_2_PARASITES_PER_UL,
+                corrected_counts,
+            )
         else:
-            return parasitemia, bound, corrected_counts
+            return (
+                parasitemia,
+                bound,
+                corrected_counts,
+            )
