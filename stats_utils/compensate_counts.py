@@ -77,7 +77,7 @@ class CountCompensator(CountCorrector):
 
         return np.array([[M11, M12], [M21, M22]])
 
-    def get_res_from_parasitemia(
+    def get_95_confidence_bounds_from_parasitemia(
         self, parasitemia: float, rbcs: Union[int, float], units_ul_in: bool, units_ul_out: bool=False
     ) -> Tuple[float, float]:
         """
