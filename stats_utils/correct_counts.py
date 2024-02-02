@@ -10,8 +10,11 @@ from abc import ABC, abstractmethod
 from yogo.data import YOGO_CLASS_ORDERING
 
 class CountCorrector:
-    def __init__(self):
-        pass
+    def __init__(self, inv_cmatrix: npt.NDArray, inv_cmatrix_std: npt.NDArray, parasite_ids: List[int], rbc_ids: List[int]):
+        self.inv_cmatrix = inv_cmatrix
+        self.inv_cmatrix_std = inv_cmatrix_std
+        self.parasite_ids = parasite_ids
+        self.rbc_ids = rbc_ids
     
     def correct_counts(self, counts: npt.NDArray, matrix: npt.NDArray):
         """
@@ -41,37 +44,37 @@ class CountCorrector:
 
         return count_vars
 
-    def calc_poisson_var_terms(self, raw_counts: npt.NDArray, inv_cmatrix: npt.NDArray) -> npt.NDArray:
+    def calc_poisson_var_terms(self, raw_counts: npt.NDArray) -> npt.NDArray:
         """
         Return absolute uncertainty term of each class count based on Poisson statistics
 
         See remoscope manuscript for full derivation
         """
-        return np.matmul(raw_counts, np.square(inv_cmatrix))
+        return np.matmul(raw_counts, np.square(self.inv_cmatrix))
 
-    def calc_deskew_var_terms(self, raw_counts: npt.NDArray, inv_cmatrix_std: npt.NDArray) -> npt.NDArray:
+    def calc_deskew_var_terms(self, raw_counts: npt.NDArray) -> npt.NDArray:
         """
         Return absolute uncertainty term of each class count based on correction
 
         See remoscope manuscript for full derivation
         """
-        return np.matmul(np.square(raw_counts), np.square(inv_cmatrix_std))    
+        return np.matmul(np.square(raw_counts), np.square(self.inv_cmatrix_std))    
 
-    def calc_parasitemia(self, corrected_counts: npt.NDArray, parasite_ids: List[int], rbc_ids: List[int]) -> float:
+    def calc_parasitemia(self, corrected_counts: npt.NDArray) -> float:
         """
         Return total parasitemia count
         """
-        parasites = np.sum(corrected_counts[parasite_ids])
-        rbcs = np.sum(corrected_counts[rbc_ids])
+        parasites = np.sum(corrected_counts[self.parasite_ids])
+        rbcs = np.sum(corrected_counts[self.rbc_ids])
         return 0 if rbcs == 0 else parasites / rbcs
 
-    def calc_parasitemia_rel_err(self, count_vars: npt.NDArray, parasite_ids: List[int], parasites: float) -> float:
+    def calc_parasitemia_rel_err(self, count_vars: npt.NDArray, parasites: float) -> float:
         """
         Return relative uncertainty of total parasitemia count
 
         See remoscope manuscript for full derivation
         """
-        parasite_count_vars = count_vars[parasite_ids]
+        parasite_count_vars = count_vars[self.parasite_ids]
 
         # Compute error
         return np.inf if parasites == 0 else np.sqrt(np.sum(parasite_count_vars)) / parasites
