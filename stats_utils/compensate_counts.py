@@ -12,6 +12,7 @@ from typing import Tuple
 from stats_utils.constants import (
     YOGO_COMPENSATION_CSV_DIR,
     CONFIDENCE_THRESHOLD,
+    PARASITES_P_UL_PER_PERCENT
 )
 
 
@@ -41,7 +42,11 @@ class CountCompensator:
         df = pd.read_csv(YOGO_COMPENSATION_CSV_DIR, dtype=np.float64)
         row = df.loc[df['conf_val'] == CONFIDENCE_THRESHOLD]
 
-        return row['fit_m'], row['fit_b'], row['cov_m'], row['cov_b']
+        # Adjust b for parasitemia % instead of parasites per uL
+        fit_b = row['fit_b'] / PARASITES_P_UL_PER_PERCENT
+        cov_b = row['cov_b'] / PARASITES_P_UL_PER_PERCENT
+
+        return row['fit_m'], fit_b, row['cov_m'], cov_b
 
     def get_matrix(self, m: float, b: float) -> npt.NDArray:
         """
@@ -70,3 +75,28 @@ class CountCompensator:
         M22 = np.sqrt(cov_b ** 2 + cov_m ** 2)
 
         return np.array([[M11, M12], [M21, M22]])
+
+    def get_res_from_parasitemia(
+        self, parasitemia: float, rbcs: float, units_ul_in: bool, units_ul_out: bool=False
+    ) -> Tuple[float, float]:
+        """
+        Return parasitemia and 95% confidence bound based on parasitemia and total rbcs
+
+        See remoscope manuscript for full derivation
+
+        95% confidence interval can be defined as
+            lower_bound = max(0, parasitemia - bound)
+            upper_bound = min(1, parasitemia + bound)
+        """
+        
+        # TODO does IJ know number of RBCs???
+        if units_ul_in:
+            parasitemia /= PARASITES_P_UL_PER_PERCENT
+        parasitemia_fraction = parasitemia / 100.0
+        
+        # Compute counts based on parasitemia and rbcs
+        parasites = parasitemia_fraction * rbcs
+        healthy = rbcs - parasites
+        counts = [healthy, parasites]
+
+        self.get_res_from_counts(counts, units_ul_out=units_ul_out)
