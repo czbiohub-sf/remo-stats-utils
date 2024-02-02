@@ -60,15 +60,17 @@ class Deskewer:
         
     def calc_deskewed_counts(self, raw_counts: npt.NDArray) -> npt.NDArray:
         """
-        Deskew raw counts using inverse confusion matrix. Optional parameters
+        Deskew raw counts using inverse confusion matrix
 
-        Returns list of deskewed cell counts. that are whole number integers (ie. no negative vals)
+        Returns list of deskewed cell counts and rounds negative values to 0
         """
         deskewed_floats = np.matmul(raw_counts, self.inv_cmatrix)
+        
         # Round all negative values to 0
         deskewed_floats[deskewed_floats < 0] = 0
 
         return deskewed_floats
+
     def calc_class_count_vars(
         self, raw_counts : npt.NDArray, deskewed_counts: npt.NDArray
     ) -> npt.NDArray:
