@@ -7,7 +7,7 @@ import numpy.typing as npt
 from typing import List, Tuple, Union
 from abc import ABC, abstractmethod
 
-from yogo.data import YOGO_CLASS_ORDERING, PERCENT_2_PARASITES_PER_UL
+from yogo.data import YOGO_CLASS_ORDERING, PARASITES_P_UL_PER_PERCENT
 
 
 class CountCorrector:
@@ -20,13 +20,13 @@ class CountCorrector:
         self.rbc_ids = rbc_ids
         self.parasite_ids = parasite_ids
     
-    def correct_counts(self, counts: npt.NDArray, matrix: npt.NDArray):
+    def correct_counts(self, raw_counts: npt.NDArray):
         """
         Correct raw counts using inverse confusion matrix
 
         Returns list of corrected cell counts and rounds negative values to 0
         """
-        corrected_counts = np.matmul(counts, matrix)
+        corrected_counts = np.matmul(raw_counts, self.inv_cmatrix)
 
         # Round all negative values to 0
         corrected_counts[corrected_counts < 0] = 0
@@ -88,11 +88,12 @@ class CountCorrector:
         # Compute error
         return np.inf if parasites == 0 else np.sqrt(np.sum(parasite_count_vars)) / parasites
 
-    def get_all_res(
-        self, raw_counts: npt.NDArray, units_ul: bool=False 
-    ) -> Tuple[float, float, npt.NDArray]:
+    def get_res_from_counts(
+        self, raw_counts: npt.NDArray, units_ul_out: bool=False 
+    ) -> Tuple[float, float]:
         """
-        Return parasitemia, 95% confidence bound, and deskewed counts
+        Return parasitemia and 95% confidence bound based on class counts
+
         See remoscope manuscript for full derivation
 
         95% confidence interval can be defined as
@@ -115,15 +116,7 @@ class CountCorrector:
         else:
             bound = 1.69 * self.calc_parasitemia_rel_err(corrected_counts, count_vars,  parasites=parasites)
 
-        if units_ul:
-            return (
-                parasitemia * PERCENT_2_PARASITES_PER_UL,
-                bound * PERCENT_2_PARASITES_PER_UL,
-                corrected_counts,
-            )
+        if units_ul_out:
+            return parasitemia * PARASITES_P_UL_PER_PERCENT, bound * PARASITES_P_UL_PER_PERCENT
         else:
-            return (
-                parasitemia,
-                bound,
-                corrected_counts,
-            )
+            return parasitemia, bound
