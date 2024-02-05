@@ -1,4 +1,3 @@
-from yogo.data import YOGO_CLASS_ORDERING
 from pathlib import Path
 
 from typing import Dict, List
@@ -14,6 +13,15 @@ YOGO_COMPENSATION_CSV_DIR= str(curr_dir / "data_files" / "frightful-wendigo-1931
 CONFIDENCE_THRESHOLD = 0.90
 
 # YOGO class IDs
+YOGO_CLASS_ORDERING = [
+    "healthy",
+    "ring",
+    "trophozoite",
+    "schizont",
+    "gametocyte",
+    "wbc",
+    "misc",
+]
 YOGO_CLASS_IDX_MAP: Dict[str, int] = {k: idx for idx, k in enumerate(YOGO_CLASS_ORDERING)}
 RBC_CLASS_IDS: List[int] = [
     YOGO_CLASS_IDX_MAP["healthy"],

@@ -7,8 +7,7 @@ import numpy.typing as npt
 from typing import List, Tuple, Union
 from abc import ABC, abstractmethod
 
-from yogo.data import YOGO_CLASS_ORDERING
-from stats_utils.constants import PARASITES_P_UL_PER_PERCENT
+from stats_utils.constants import YOGO_CLASS_ORDERING, PARASITES_P_UL_PER_PERCENT
 
 
 class CountCorrector:
