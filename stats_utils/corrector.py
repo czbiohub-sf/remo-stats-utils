@@ -1,6 +1,7 @@
 """
 Base class for correcting YOGO class counts
 """
+
 import numpy as np
 import numpy.typing as npt
 
