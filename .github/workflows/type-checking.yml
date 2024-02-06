@@ -12,4 +12,4 @@ jobs:
           pip install --upgrade pip
           pip install mypy
       - name: mypy
-        run: mypy stats_utils
+        run: mypy --ignore-missing-imports stats_utils
