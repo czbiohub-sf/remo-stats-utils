@@ -27,6 +27,10 @@ setup(
     install_requires=[
         "numpy",
         "pandas",
+        "black==23.1.0",
+        "mypy==1.0.1",
+        "mypy-extensions==1.0.0",
+        "ruff==0.0.253",
 	    "yogo @ git+https://github.com/czbiohub-sf/yogo@main",
     ],
     classifiers=["CZ Biohub :: Bioengineering"],
