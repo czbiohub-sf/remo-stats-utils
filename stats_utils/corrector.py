@@ -9,10 +9,11 @@ from typing import List, Tuple, Union
 from abc import ABC, abstractmethod
 
 from stats_utils.constants import (
-	YOGO_CLASS_ORDERING,
-	YOGO_CLASS_IDX_MAP,
-	PARASITES_P_UL_PER_PERCENT,
+    YOGO_CLASS_ORDERING,
+    YOGO_CLASS_IDX_MAP,
+    PARASITES_P_UL_PER_PERCENT,
 )
+
 
 class CountCorrector:
     def __init__(
@@ -139,9 +140,7 @@ class CountCorrector:
         else:
             return parasitemia, bound
 
-    def get_95_confidence_bound(
-        self, parasitemia: float, bound: float
-    ) -> List[float]:
+    def get_95_confidence_bound(self, parasitemia: float, bound: float) -> List[float]:
         """
         Return 95% confidence bound on parasitemia estimate
         """
