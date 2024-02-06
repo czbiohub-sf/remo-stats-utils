@@ -8,8 +8,11 @@ import numpy.typing as npt
 from typing import List, Tuple, Union
 from abc import ABC, abstractmethod
 
-from stats_utils.constants import YOGO_CLASS_ORDERING, PARASITES_P_UL_PER_PERCENT
-
+from stats_utils.constants import (
+	YOGO_CLASS_ORDERING,
+	YOGO_CLASS_IDX_MAP,
+	PARASITES_P_UL_PER_PERCENT,
+)
 
 class CountCorrector:
     def __init__(
@@ -115,7 +118,7 @@ class CountCorrector:
         parasites = np.sum(corrected_counts[self.parasite_ids])
 
         # Calc_parasitemia
-        parasitemia = calc_parasitemia(corrected_counts, parasites=parasites)
+        parasitemia = self.calc_parasitemia(corrected_counts, parasites=parasites)
 
         # Get uncertainties
         count_vars = self.calc_count_vars(raw_counts)
@@ -138,7 +141,7 @@ class CountCorrector:
 
     def get_95_confidence_bound(
         self, parasitemia: float, bound: float
-    ) -> Tuple[float, float]:
+    ) -> List[float]:
         """
         Return 95% confidence bound on parasitemia estimate
         """

@@ -6,8 +6,9 @@ Based on clinical Uganda data
 
 import numpy as np
 import numpy.typing as npt
+import pandas as pd
 
-from typing import Tuple, Union
+from typing import List, Tuple, Union
 
 from stats_utils.constants import (
     YOGO_COMPENSATION_CSV_DIR,
