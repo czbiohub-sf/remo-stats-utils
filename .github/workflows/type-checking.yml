@@ -12,4 +12,4 @@ jobs:
           pip install --upgrade pip
           pip install mypy
       - name: mypy
-        run: mypy src/
+        run: mypy stats_utils
