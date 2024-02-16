@@ -30,7 +30,9 @@ YOGO_CLASS_ORDERING = [
     "wbc",
     "misc",
 ]
-YOGO_CLASS_IDX_MAP: Dict[str, int] = {k: idx for idx, k in enumerate(YOGO_CLASS_ORDERING)}
+YOGO_CLASS_IDX_MAP: Dict[str, int] = {
+    k: idx for idx, k in enumerate(YOGO_CLASS_ORDERING)
+}
 RBC_CLASS_IDS: List[int] = [
     YOGO_CLASS_IDX_MAP["healthy"],
     YOGO_CLASS_IDX_MAP["ring"],
@@ -50,4 +52,4 @@ PARASITE_CLASS_IDS: List[int] = [
 ]
 
 # Parasitemia unit conversion
-PARASITES_P_UL_PER_PERCENT = 5E6 # parasites/uL = parasitemia % x 5E6
+PARASITES_P_UL_PER_PERCENT = 5e6  # parasites/uL = parasitemia % x 5E6

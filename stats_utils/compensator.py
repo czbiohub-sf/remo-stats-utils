@@ -6,8 +6,9 @@ Based on clinical Uganda data
 
 import numpy as np
 import numpy.typing as npt
+import pandas as pd
 
-from typing import Tuple, Union
+from typing import List, Tuple, Union
 
 from stats_utils.constants import (
     DATA_DIR,
@@ -16,7 +17,7 @@ from stats_utils.constants import (
     NO_HEATMAPS_SUFFIX2,
     W_HEATMAPS_SUFFIX2,
     CONFIDENCE_THRESHOLD,
-    PARASITES_P_UL_PER_PERCENT
+    PARASITES_P_UL_PER_PERCENT,
 )
 from stats_utils.correct_counts import CountCorrector
 
@@ -60,16 +61,16 @@ class CountCompensator(CountCorrector):
         Extract fit metrics from csv
 
         Returns fit metrics as (m, b, cov_m, cov_b)
-        """        
+        """
 
         df = pd.read_csv(self.compensation_csv_dir, dtype=np.float64)
         row = df.loc[df['conf_val'] == CONFIDENCE_THRESHOLD]
 
         # Adjust b for parasitemia % instead of parasites per uL
-        fit_b = row['fit_b'] / PARASITES_P_UL_PER_PERCENT
-        cov_b = row['cov_b'] / PARASITES_P_UL_PER_PERCENT
+        fit_b = row["fit_b"] / PARASITES_P_UL_PER_PERCENT
+        cov_b = row["cov_b"] / PARASITES_P_UL_PER_PERCENT
 
-        return row['fit_m'], fit_b, row['cov_m'], cov_b
+        return row["fit_m"], fit_b, row["cov_m"], cov_b
 
     def get_matrix(self, m: float, b: float) -> npt.NDArray:
         """
@@ -93,14 +94,18 @@ class CountCompensator(CountCorrector):
         """
         M11 = cov_b
         M12 = cov_b
-        
-        M21 = np.sqrt(cov_b ** 2 + cov_m ** 2)
-        M22 = np.sqrt(cov_b ** 2 + cov_m ** 2)
+
+        M21 = np.sqrt(cov_b**2 + cov_m**2)
+        M22 = np.sqrt(cov_b**2 + cov_m**2)
 
         return np.array([[M11, M12], [M21, M22]])
 
     def get_95_bound_and_compensation_from_parasitemia(
-        self, raw_parasitemia: float, rbcs: Union[int, float], units_ul_in: bool, units_ul_out: bool=False
+        self,
+        raw_parasitemia: float,
+        rbcs: Union[int, float],
+        units_ul_in: bool,
+        units_ul_out: bool = False,
     ) -> Tuple[float, List[float]]:
         """
         Return compensated parasitemia and 95% confidence bound based on raw parasitemia and total rbcs
@@ -111,16 +116,20 @@ class CountCompensator(CountCorrector):
             lower_bound = max(0, parasitemia - bound)
             upper_bound = min(1, parasitemia + bound)
         """
-        
+
         if units_ul_in:
             raw_parasitemia /= PARASITES_P_UL_PER_PERCENT
         parasitemia_fraction = raw_parasitemia / 100.0
-        
+
         # Compute counts based on parasitemia and rbcs
         parasites = parasitemia_fraction * rbcs
         healthy = rbcs - parasites
         counts = [healthy, parasites]
 
-        compensated_parasitemia, bound = self.get_res_from_counts(counts, units_ul_out=units_ul_out)
+        compensated_parasitemia, bound = self.get_res_from_counts(
+            counts, units_ul_out=units_ul_out
+        )
 
-        return compensated_parasitemia, self.get_95_confidence_bound(compensated_parasitemia, bound)
+        return compensated_parasitemia, self.get_95_confidence_bound(
+            compensated_parasitemia, bound
+        )
