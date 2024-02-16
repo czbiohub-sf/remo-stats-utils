@@ -24,6 +24,19 @@ from stats_utils.correct_counts import CountCorrector
 
 class CountCompensator(CountCorrector):
     def __init__(self, model_name: str, clinical=True, heatmaps=False):
+        """
+        Initialize count compensator
+
+        Input(s)
+        - model_name: 
+            Include name and number (eg. "frightful-wendigo-1931")
+        - clinical: 
+            True for clinical Uganda data
+            False for cultured lab data
+        - heatmaps: 
+            True for heatmap nuked data
+            False otherwise
+        """
         
         # Generate directory for compensation metrics csv
         if clinical:
@@ -34,15 +47,15 @@ class CountCompensator(CountCorrector):
             suffix2 = W_HEATMAPS_SUFFIX2
         else:
             suffix2 = NO_HEATMAPS_SUFFIX2
-        self.compensation_csv_dir = str(DATA_DIR / model_name / (model_name + suffix1 + suffix2))
+        compensation_csv_dir = str(DATA_DIR / model_name / (model_name + suffix1 + suffix2))
 
         # Check that compensation metrics csv exists
-        if not self.compensation_csv_dir.is_dir():
+        if not compensation_csv_dir.is_dir():
             raise FileNotFoundError(
-                f"Could not find {model_name} compensation metrics file {self.compensation_csv_dir}"
+                f"Could not find {model_name} compensation metrics file {compensation_csv_dir}"
             )
 
-        m, b, cov_m, cov_b = self.get_fit_metrics()
+        m, b, cov_m, cov_b = self.get_fit_metrics(compensation_csv_dir)
         inv_cmatrix = self.get_matrix(m, b)
         inv_cmatrix_std = self.get_matrix_std(cov_m, cov_b)
 
@@ -56,14 +69,14 @@ class CountCompensator(CountCorrector):
             parasite_ids,
         )
 
-    def get_fit_metrics(self) -> Tuple[float, float, float, float]:
+    def get_fit_metrics(self, compensation_csv_dir: str) -> Tuple[float, float, float, float]:
         """
         Extract fit metrics from csv
 
         Returns fit metrics as (m, b, cov_m, cov_b)
         """
 
-        df = pd.read_csv(self.compensation_csv_dir, dtype=np.float64)
+        df = pd.read_csv(compensation_csv_dir, dtype=np.float64)
         row = df.loc[df['conf_val'] == CONFIDENCE_THRESHOLD]
 
         # Adjust b for parasitemia % instead of parasites per uL
@@ -112,11 +125,18 @@ class CountCompensator(CountCorrector):
 
         See remoscope manuscript for full derivation
 
-        95% confidence interval can be defined as
-            lower_bound = max(0, parasitemia - bound)
-            upper_bound = min(1, parasitemia + bound)
+        Input(s)
+        - raw_parasitemia:
+            Uncorrected parasitemia estimate
+        - rbcs:
+            Total count of rbcs
+        - units_ul_in:
+            True if raw_parasitemia is in parasites/uL 
+            False if raw_parasitemia is in %
+        - units_ul_out:
+            True to return parasitemia in parasitemia/uL
+            False to return parasitemia in %
         """
-
         if units_ul_in:
             raw_parasitemia /= PARASITES_P_UL_PER_PERCENT
         parasitemia_fraction = raw_parasitemia / 100.0
