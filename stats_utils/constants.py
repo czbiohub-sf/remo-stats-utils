@@ -3,11 +3,19 @@ from pathlib import Path
 from typing import Dict, List
 
 
-# Paths to data files
+# Path to data files
 curr_dir = Path(__file__).parent.resolve()
-YOGO_CMATRIX_MEAN_DIR = str(curr_dir / "data_files" / "frightful-wendigo-1931-cmatrix-mean.npy")
-YOGO_INV_CMATRIX_STD_DIR = str(curr_dir / "data_files" / "frightful-wendigo-1931-inverse-cmatrix-std.npy")
-YOGO_COMPENSATION_CSV_DIR= str(curr_dir / "data_files" / "frightful-wendigo-1931-with-heatmaps_titration_metrics.csv")
+DATA_DIR = curr_dir / "data_files"
+
+# Suffixes for data files
+CMATRIX_MEAN_SUFFIX = "-cmatrix-mean.npy"
+INV_CMATRIX_STD_SUFFIX = "-inv-cmatrix-std.npy"
+
+CLINICAL_COMPENSATION_SUFFIX1 = "-clinical-compensation"
+CULTURED_COMPENSATION_SUFFIX1 = "-cultured-compensation"
+
+W_HEATMAPS_SUFFIX2 = "-with-heatmaps.csv"
+NO_HEATMAPS_SUFFIX2 = "-no-heatmaps.csv"
 
 # Confidence threshold
 CONFIDENCE_THRESHOLD = 0.90

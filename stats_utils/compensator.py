@@ -10,7 +10,11 @@ import numpy.typing as npt
 from typing import Tuple, Union
 
 from stats_utils.constants import (
-    YOGO_COMPENSATION_CSV_DIR,
+    DATA_DIR,
+    CULTURED_COMPENSATION_SUFFIX1,
+    CLINICAL_COMPENSATION_SUFFIX1,
+    NO_HEATMAPS_SUFFIX2,
+    W_HEATMAPS_SUFFIX2,
     CONFIDENCE_THRESHOLD,
     PARASITES_P_UL_PER_PERCENT
 )
@@ -18,7 +22,25 @@ from stats_utils.correct_counts import CountCorrector
 
 
 class CountCompensator(CountCorrector):
-    def __init__(self):
+    def __init__(self, model_name: str, clinical=True, heatmaps=False):
+        
+        # Generate directory for compensation metrics csv
+        if clinical:
+            suffix1 = CLINICAL_COMPENSATION_SUFFIX1
+        else:
+            suffix1 = CULTURED_COMPENSATION_SUFFIX1
+        if heatmaps:
+            suffix2 = W_HEATMAPS_SUFFIX2
+        else:
+            suffix2 = NO_HEATMAPS_SUFFIX2
+        self.compensation_csv_dir = str(DATA_DIR / model_name / (model_name + suffix1 + suffix2))
+
+        # Check that compensation metrics csv exists
+        if not self.compensation_csv_dir.is_dir():
+            raise FileNotFoundError(
+                f"Could not find {model_name} compensation metrics file {self.compensation_csv_dir}"
+            )
+
         m, b, cov_m, cov_b = self.get_fit_metrics()
         inv_cmatrix = self.get_matrix(m, b)
         inv_cmatrix_std = self.get_matrix_std(cov_m, cov_b)
@@ -40,7 +62,7 @@ class CountCompensator(CountCorrector):
         Returns fit metrics as (m, b, cov_m, cov_b)
         """        
 
-        df = pd.read_csv(YOGO_COMPENSATION_CSV_DIR, dtype=np.float64)
+        df = pd.read_csv(self.compensation_csv_dir, dtype=np.float64)
         row = df.loc[df['conf_val'] == CONFIDENCE_THRESHOLD]
 
         # Adjust b for parasitemia % instead of parasites per uL
