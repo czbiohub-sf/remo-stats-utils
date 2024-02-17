@@ -20,7 +20,7 @@ Let the model ID include the model name and number, separated by dashes:
 For example, for model ID ```frightful-wendigo-1981```:
 ```
 data_files/
-├── frightful-wendigo-1981/
+├── frightful-wendigo-1931/
 │   ├── frightful-wendigo-1931-cmatrix-mean.npy
 │   ├── frightful-wendigo-1931-inv-cmatrix-std.npy
 │   ├── frightful-wendigo-1931-cultured-compensation-no-heatmaps.csv
