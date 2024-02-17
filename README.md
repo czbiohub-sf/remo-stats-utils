@@ -17,7 +17,7 @@ Let the model ID include the model name and number, separated by dashes:
 * Group files by model ID in the subfolder ```data_files/<model ID>```
 * Name data files ```<model ID><suffix>```, where the suffixes are defined in ```stats_utils/constants.py```
 
-For example, for model ID```frightful-wendigo-1981```:
+For example, for model ID ```frightful-wendigo-1981```:
 ```
 data_files/
 ├── frightful-wendigo-1981/
