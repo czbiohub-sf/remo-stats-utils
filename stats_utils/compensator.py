@@ -9,6 +9,7 @@ import numpy.typing as npt
 import pandas as pd
 
 from typing import List, Tuple, Union
+from pathlib import Path
 
 from stats_utils.constants import (
     DATA_DIR,
@@ -19,7 +20,7 @@ from stats_utils.constants import (
     CONFIDENCE_THRESHOLD,
     PARASITES_P_UL_PER_PERCENT,
 )
-from stats_utils.correct_counts import CountCorrector
+from stats_utils.corrector import CountCorrector
 
 
 class CountCompensator(CountCorrector):
@@ -50,9 +51,9 @@ class CountCompensator(CountCorrector):
         compensation_csv_dir = str(DATA_DIR / model_name / (model_name + suffix1 + suffix2))
 
         # Check that compensation metrics csv exists
-        if not compensation_csv_dir.is_dir():
+        if not Path(compensation_csv_dir).is_file():
             raise FileNotFoundError(
-                f"Could not find {model_name} compensation metrics file {compensation_csv_dir}"
+                f"Could not find compensation metrics for {model_name} ({compensation_csv_dir})"
             )
 
         m, b, cov_m, cov_b = self.get_fit_metrics(compensation_csv_dir)

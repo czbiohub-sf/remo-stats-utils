@@ -6,6 +6,8 @@ Based on cultured lab data
 
 import numpy as np
 
+from pathlib import Path
+
 from stats_utils.constants import (
     RBC_CLASS_IDS,
     ASEXUAL_PARASITE_CLASS_IDS,
@@ -13,7 +15,7 @@ from stats_utils.constants import (
     CMATRIX_MEAN_SUFFIX,
     INV_CMATRIX_STD_SUFFIX,
 )
-from stats_utils.correct_counts import CountCorrector
+from stats_utils.corrector import CountCorrector
 
 
 class CountDeskewer(CountCorrector):
@@ -29,13 +31,13 @@ class CountDeskewer(CountCorrector):
         inv_cmatrix_std_dir = str(DATA_DIR / model_name / (model_name + INV_CMATRIX_STD_SUFFIX))
 
         # Check that cmatrix data exists
-        if not cmatrix_mean_dir.is_dir():
+        if not Path(cmatrix_mean_dir).is_file():
             raise FileNotFoundError(
-                f"Could not find {model_name} confusion matrix mean file {cmatrix_mean_dir}"
+                f"Could not find confusion matrix mean for {model_name} ({cmatrix_mean_dir})"
             )
-        if not inv_cmatrix_std_dir.is_dir():
+        if not Path(inv_cmatrix_std_dir).is_file():
             raise FileNotFoundError(
-                f"Could not find {model_name} inverse confusion matrix std file {inv_cmatrix_std_dir}"
+                f"Could not find inverse confusion matrix std for {model_name} ({inv_cmatrix_std_dir})"
             )
 
         # Load confusion matrix data
