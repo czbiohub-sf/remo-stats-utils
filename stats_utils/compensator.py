@@ -129,7 +129,8 @@ class CountCompensator(CountCorrector):
         """
         healthy = counts[YOGO_CLASS_IDX_MAP["healthy"]]
         parasites = np.sum(counts[ASEXUAL_PARASITE_CLASS_IDS])
-        return np.asarray([, np.sum(counts[ASEXUAL_PARASITE_CLASS_IDS])])
+        
+        return np.asarray([healthy, parasites])
 
     def calc_parasitemia(
         self, counts: npt.NDArray) -> float:
