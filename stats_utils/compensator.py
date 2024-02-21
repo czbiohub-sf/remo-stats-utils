@@ -29,16 +29,16 @@ class CountCompensator(CountCorrector):
         Initialize count compensator
 
         Input(s)
-        - model_name: 
+        - model_name:
             Include name and number (eg. "frightful-wendigo-1931")
-        - clinical: 
+        - clinical:
             True for clinical Uganda data
             False for cultured lab data
-        - heatmaps: 
+        - heatmaps:
             True for heatmap nuked data
             False otherwise
         """
-        
+
         # Generate directory for compensation metrics csv
         if clinical:
             suffix1 = CLINICAL_COMPENSATION_SUFFIX1
@@ -48,7 +48,9 @@ class CountCompensator(CountCorrector):
             suffix2 = W_HEATMAPS_SUFFIX2
         else:
             suffix2 = NO_HEATMAPS_SUFFIX2
-        compensation_csv_dir = str(DATA_DIR / model_name / (model_name + suffix1 + suffix2))
+        compensation_csv_dir = str(
+            DATA_DIR / model_name / (model_name + suffix1 + suffix2)
+        )
 
         # Check that compensation metrics csv exists
         if not Path(compensation_csv_dir).is_file():
@@ -70,7 +72,9 @@ class CountCompensator(CountCorrector):
             parasite_ids,
         )
 
-    def get_fit_metrics(self, compensation_csv_dir: str) -> Tuple[float, float, float, float]:
+    def get_fit_metrics(
+        self, compensation_csv_dir: str
+    ) -> Tuple[float, float, float, float]:
         """
         Extract fit metrics from csv
 
@@ -78,7 +82,7 @@ class CountCompensator(CountCorrector):
         """
 
         df = pd.read_csv(compensation_csv_dir, dtype=np.float64)
-        row = df.loc[df['conf_val'] == CONFIDENCE_THRESHOLD]
+        row = df.loc[df["conf_val"] == CONFIDENCE_THRESHOLD]
 
         # Adjust b for parasitemia % instead of parasites per uL
         fit_b = row["fit_b"] / PARASITES_P_UL_PER_PERCENT
@@ -132,7 +136,7 @@ class CountCompensator(CountCorrector):
         - rbcs:
             Total count of rbcs
         - units_ul_in:
-            True if raw_parasitemia is in parasites/uL 
+            True if raw_parasitemia is in parasites/uL
             False if raw_parasitemia is in %
         - units_ul_out:
             True to return parasitemia in parasitemia/uL

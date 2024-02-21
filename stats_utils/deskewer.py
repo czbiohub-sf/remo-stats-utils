@@ -24,11 +24,15 @@ class CountDeskewer(CountCorrector):
         Initialize count deskewer
 
         Input(s)
-        - model_name: 
+        - model_name:
             Include name and number (eg. "frightful-wendigo-1931")
         """
-        cmatrix_mean_dir = str(DATA_DIR / model_name / (model_name + CMATRIX_MEAN_SUFFIX))
-        inv_cmatrix_std_dir = str(DATA_DIR / model_name / (model_name + INV_CMATRIX_STD_SUFFIX))
+        cmatrix_mean_dir = str(
+            DATA_DIR / model_name / (model_name + CMATRIX_MEAN_SUFFIX)
+        )
+        inv_cmatrix_std_dir = str(
+            DATA_DIR / model_name / (model_name + INV_CMATRIX_STD_SUFFIX)
+        )
 
         # Check that cmatrix data exists
         if not Path(cmatrix_mean_dir).is_file():
