@@ -59,19 +59,16 @@ class CountDeskewer(CountCorrector):
         )
 
     def calc_parasitemia(
-        self, counts: npt.NDArray, parasites: Union[None, float] = None
-    ) -> float:
+        self, counts: npt.NDArray) -> float:
         """
         Wrapper for CountCorrector's internal function _calc_parasitemia()
 
         Input(s)
         - counts:
             Cell counts, formatted as 7x1 array with all YOGO classes
-        - parasites (optional):
-            Total count of parasites. Assumes parasite count is unknown by default
         """
 
-        return self._calc_parasitemia(counts, parasites=parasites)
+        return self._calc_parasitemia(counts)
 
     def get_res_from_counts(
         self, raw_counts: npt.NDArray, units_ul_out: bool = False

@@ -126,12 +126,13 @@ class CountCompensator(CountCorrector):
 
         Takes in a 7x1 np array which includes all YOGO classes
         Outputs 2x1 np array with [healthy, parasites] only
-        """    
-        return np.asarray([counts[YOGO_CLASS_IDX_MAP["healthy"]], counts[ASEXUAL_PARASITE_CLASS_IDS]])
+        """
+        healthy = counts[YOGO_CLASS_IDX_MAP["healthy"]]
+        parasites = np.sum(counts[ASEXUAL_PARASITE_CLASS_IDS])
+        return np.asarray([, np.sum(counts[ASEXUAL_PARASITE_CLASS_IDS])])
 
     def calc_parasitemia(
-        self, counts: npt.NDArray, parasites: Union[None, float] = None
-    ) -> float:
+        self, counts: npt.NDArray) -> float:
         """
         Wrapper for CountCorrector's internal function _calc_parasitemia()
 
@@ -140,12 +141,10 @@ class CountCompensator(CountCorrector):
         Input(s)
         - counts:
             Cell counts, formatted as 7x1 array with all YOGO classes
-        - parasites (optional):
-            Total count of parasites. Assumes parasite count is unknown by default
         """
 
         reformatted_counts = self._reformat_7x1_to_2x1(counts)
-        return self._calc_parasitemia(reformatted_counts, parasites=parasites)
+        return self._calc_parasitemia(reformatted_counts)
 
     def get_res_from_counts(
         self, raw_counts: npt.NDArray, units_ul_out: bool = False
