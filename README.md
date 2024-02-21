@@ -1,4 +1,5 @@
 # Statistics utils
+**Live version: V0.0.1 2024-02-21**
 
 For analysis of remoscope results.
 
