@@ -57,3 +57,34 @@ class CountDeskewer(CountCorrector):
             RBC_CLASS_IDS,
             ASEXUAL_PARASITE_CLASS_IDS,
         )
+
+    def calc_parasitemia(
+        self, counts: npt.NDArray, parasites: Union[None, float] = None
+    ) -> float:
+        """
+        Wrapper for CountCorrector's internal function _calc_parasitemia()
+
+        Input(s)
+        - counts:
+            Cell counts, formatted as 7x1 array with all YOGO classes
+        - parasites (optional):
+            Total count of parasites. Assumes parasite count is unknown by default
+        """
+
+        return self._calc_parasitemia(counts, parasites=parasites)
+
+    def get_res_from_counts(
+        self, raw_counts: npt.NDArray, units_ul_out: bool = False
+    ) -> Tuple[float, float]:
+        """
+        Wrapper for CountCorrector's internal function _get_res_from_counts()
+                
+        Input(s)
+        - counts:
+            Raw cell counts, formatted as 7x1 array with all YOGO classes
+        - units_ul_out (optional):
+            True to return parasitemia in parasitemia/uL
+            False to return parasitemia in % (default)
+        """
+
+        return self.get_res_from_counts(raw_counts, units_ul_out=units_ul_out)

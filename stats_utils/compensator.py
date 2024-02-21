@@ -19,6 +19,8 @@ from stats_utils.constants import (
     W_HEATMAPS_SUFFIX2,
     CONFIDENCE_THRESHOLD,
     PARASITES_P_UL_PER_PERCENT,
+    YOGO_CLASS_IDX_MAP,
+    ASEXUAL_PARASITE_CLASS_IDS,
 )
 from stats_utils.corrector import CountCorrector
 
@@ -31,12 +33,12 @@ class CountCompensator(CountCorrector):
         Input(s)
         - model_name:
             Include name and number (eg. "frightful-wendigo-1931")
-        - clinical:
-            True for clinical Uganda data
+        - clinical (optional):
+            True for clinical Uganda data (default)
             False for cultured lab data
-        - heatmaps:
+        - heatmaps (optional):
             True for heatmap nuked data
-            False otherwise
+            False otherwise (default)
         """
 
         # Generate directory for compensation metrics csv
@@ -58,9 +60,9 @@ class CountCompensator(CountCorrector):
                 f"Could not find compensation metrics for {model_name} ({compensation_csv_dir})"
             )
 
-        m, b, cov_m, cov_b = self.get_fit_metrics(compensation_csv_dir)
+        m, b, cov_m, cov_b = self._get_fit_metrics(compensation_csv_dir)
         inv_cmatrix = self.get_matrix(m, b)
-        inv_cmatrix_std = self.get_matrix_std(cov_m, cov_b)
+        inv_cmatrix_std = self._get_matrix_std(cov_m, cov_b)
 
         rbc_ids = [0, 1]
         parasite_ids = [1]
@@ -72,7 +74,7 @@ class CountCompensator(CountCorrector):
             parasite_ids,
         )
 
-    def get_fit_metrics(
+    def _get_fit_metrics(
         self, compensation_csv_dir: str
     ) -> Tuple[float, float, float, float]:
         """
@@ -90,7 +92,7 @@ class CountCompensator(CountCorrector):
 
         return row["fit_m"], fit_b, row["cov_m"], cov_b
 
-    def get_matrix(self, m: float, b: float) -> npt.NDArray:
+    def _get_matrix(self, m: float, b: float) -> npt.NDArray:
         """
         Return inverse 2x2 confusion matrix
 
@@ -104,7 +106,7 @@ class CountCompensator(CountCorrector):
 
         return np.array([[M11, M12], [M21, M22]])
 
-    def get_matrix_std(self, cov_m: float, cov_b: float) -> npt.NDArray:
+    def _get_matrix_std(self, cov_m: float, cov_b: float) -> npt.NDArray:
         """
         Return standard deviations inverse 2x2 confusion matrix
 
@@ -117,6 +119,52 @@ class CountCompensator(CountCorrector):
         M22 = np.sqrt(cov_b**2 + cov_m**2)
 
         return np.array([[M11, M12], [M21, M22]])
+
+    def _reformat_7x1_to_2x1(self, counts: npt.NDArray) -> npt.NDArray:
+        """
+        Reformats array into a format compatible with CountCompensator
+
+        Takes in a 7x1 np array which includes all YOGO classes
+        Outputs 2x1 np array with [healthy, parasites] only
+        """    
+        return np.asarray([counts[YOGO_CLASS_IDX_MAP["healthy"]], counts[ASEXUAL_PARASITE_CLASS_IDS]])
+
+    def calc_parasitemia(
+        self, counts: npt.NDArray, parasites: Union[None, float] = None
+    ) -> float:
+        """
+        Wrapper for CountCorrector's internal function _calc_parasitemia()
+
+        Reformats 7x1 array into required 2x1 array before computing statistics
+
+        Input(s)
+        - counts:
+            Cell counts, formatted as 7x1 array with all YOGO classes
+        - parasites (optional):
+            Total count of parasites. Assumes parasite count is unknown by default
+        """
+
+        reformatted_counts = self._reformat_7x1_to_2x1(counts)
+        return self._calc_parasitemia(reformatted_counts, parasites=parasites)
+
+    def get_res_from_counts(
+        self, raw_counts: npt.NDArray, units_ul_out: bool = False
+    ) -> Tuple[float, float]:
+        """
+        Wrapper for CountCorrector's internal function _get_res_from_counts()
+                
+        Reformats 7x1 array into required 2x1 array before computing statistics
+
+        Input(s)
+        - counts:
+            Raw cell counts, formatted as 7x1 array with all YOGO classes
+        - units_ul_out (optional):
+            True to return parasitemia in parasitemia/uL
+            False to return parasitemia in % (default)
+        """
+
+        reformatted_counts = self._reformat_7x1_to_2x1(raw_counts)
+        return self.get_res_from_counts(reformatted_counts, units_ul_out=units_ul_out)
 
     def get_95_bound_and_compensation_from_parasitemia(
         self,
@@ -138,9 +186,9 @@ class CountCompensator(CountCorrector):
         - units_ul_in:
             True if raw_parasitemia is in parasites/uL
             False if raw_parasitemia is in %
-        - units_ul_out:
+        - units_ul_out (optional):
             True to return parasitemia in parasitemia/uL
-            False to return parasitemia in %
+            False to return parasitemia in % (default)
         """
         if units_ul_in:
             raw_parasitemia /= PARASITES_P_UL_PER_PERCENT
@@ -155,6 +203,6 @@ class CountCompensator(CountCorrector):
             counts, units_ul_out=units_ul_out
         )
 
-        return compensated_parasitemia, self.get_95_confidence_bound(
+        return compensated_parasitemia, self._get_95_confidence_bound(
             compensated_parasitemia, bound
         )

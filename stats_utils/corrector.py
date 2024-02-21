@@ -29,7 +29,7 @@ class CountCorrector:
         self.rbc_ids = rbc_ids
         self.parasite_ids = parasite_ids
 
-    def correct_counts(self, raw_counts: npt.NDArray):
+    def _correct_counts(self, raw_counts: npt.NDArray):
         """
         Correct raw counts using inverse confusion matrix
 
@@ -42,20 +42,20 @@ class CountCorrector:
 
         return corrected_counts
 
-    def calc_count_vars(self, raw_counts: npt.NDArray) -> npt.NDArray:
+    def _calc_count_vars(self, raw_counts: npt.NDArray) -> npt.NDArray:
         """
         Return absolute uncertainty of each class count based on deskewing and Poisson statistics
 
         See remoscope manuscript for full derivation
         """
-        poisson_terms = self.calc_poisson_var_terms(raw_counts)
-        deskew_terms = self.calc_deskew_var_terms(raw_counts)
+        poisson_terms = self._calc_poisson_var_terms(raw_counts)
+        deskew_terms = self._calc_deskew_var_terms(raw_counts)
 
         count_vars = poisson_terms + deskew_terms
 
         return count_vars
 
-    def calc_poisson_var_terms(self, raw_counts: npt.NDArray) -> npt.NDArray:
+    def _calc_poisson_var_terms(self, raw_counts: npt.NDArray) -> npt.NDArray:
         """
         Return absolute uncertainty term of each class count based on Poisson statistics
 
@@ -63,7 +63,7 @@ class CountCorrector:
         """
         return np.matmul(raw_counts, np.square(self.inv_cmatrix))
 
-    def calc_deskew_var_terms(self, raw_counts: npt.NDArray) -> npt.NDArray:
+    def _calc_deskew_var_terms(self, raw_counts: npt.NDArray) -> npt.NDArray:
         """
         Return absolute uncertainty term of each class count based on correction
 
@@ -71,19 +71,19 @@ class CountCorrector:
         """
         return np.matmul(np.square(raw_counts), np.square(self.inv_cmatrix_std))
 
-    def calc_parasitemia(
-        self, corrected_counts: npt.NDArray, parasites: Union[None, float] = None
+    def _calc_parasitemia(
+        self, counts: npt.NDArray, parasites: Union[None, float] = None
     ) -> float:
         """
         Return total parasitemia count
         """
-        rbcs = np.sum(corrected_counts[self.rbc_ids])
+        rbcs = np.sum(counts[self.rbc_ids])
         if parasites is None:
-            parasites = np.sum(corrected_counts[self.parasite_ids])
+            parasites = np.sum(counts[self.parasite_ids])
 
         return 0 if rbcs == 0 else parasites / rbcs
 
-    def calc_parasitemia_rel_err(
+    def _calc_parasitemia_rel_err(
         self,
         corrected_counts: npt.NDArray,
         count_vars: npt.NDArray,
@@ -106,7 +106,7 @@ class CountCorrector:
             else np.sqrt(np.sum(parasite_count_vars)) / parasites
         )
 
-    def get_res_from_counts(
+    def _get_res_from_counts(
         self, raw_counts: npt.NDArray, units_ul_out: bool = False
     ) -> Tuple[float, float]:
         """
@@ -115,20 +115,20 @@ class CountCorrector:
         See remoscope manuscript for full derivation
         """
         # Correct counts
-        corrected_counts = self.correct_counts(raw_counts)
+        corrected_counts = self._correct_counts(raw_counts)
         parasites = np.sum(corrected_counts[self.parasite_ids])
 
         # Calc_parasitemia
-        parasitemia = self.calc_parasitemia(corrected_counts, parasites=parasites)
+        parasitemia = self._calc_parasitemia(corrected_counts, parasites=parasites)
 
         # Get uncertainties
-        count_vars = self.calc_count_vars(raw_counts)
+        count_vars = self._calc_count_vars(raw_counts)
 
         # Use rule of 3 if there are no parasites
         if parasites == 0:
             bound = 3 / corrected_counts[YOGO_CLASS_IDX_MAP["healthy"]]
         else:
-            bound = 1.69 * self.calc_parasitemia_rel_err(
+            bound = 1.69 * self._calc_parasitemia_rel_err(
                 corrected_counts, count_vars, parasites=parasites
             )
 
@@ -140,7 +140,7 @@ class CountCorrector:
         else:
             return parasitemia, bound
 
-    def get_95_confidence_bound(self, parasitemia: float, bound: float) -> List[float]:
+    def _get_95_confidence_bound(self, parasitemia: float, bound: float) -> List[float]:
         """
         Return 95% confidence bound on parasitemia estimate
         """
