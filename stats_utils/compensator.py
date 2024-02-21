@@ -87,10 +87,10 @@ class CountCompensator(CountCorrector):
         row = df.loc[df["conf_val"] == CONFIDENCE_THRESHOLD]
 
         # Adjust b for parasitemia % instead of parasites per uL
-        fit_b = row["fit_b"].values / PARASITES_P_UL_PER_PERCENT
-        cov_b = row["cov_b"].values / PARASITES_P_UL_PER_PERCENT
+        fit_b = row["fit_b"].item() / PARASITES_P_UL_PER_PERCENT
+        cov_b = row["cov_b"].item() / PARASITES_P_UL_PER_PERCENT
 
-        return row["fit_m"].values, fit_b, row["cov_m"].values, cov_b
+        return row["fit_m"].item(), fit_b, row["cov_m"].item(), cov_b
 
     def _get_matrix(self, m: float, b: float) -> npt.NDArray:
         """
