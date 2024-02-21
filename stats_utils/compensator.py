@@ -129,7 +129,7 @@ class CountCompensator(CountCorrector):
         """
         healthy = counts[YOGO_CLASS_IDX_MAP["healthy"]]
         parasites = np.sum(counts[ASEXUAL_PARASITE_CLASS_IDS])
-        
+
         return np.asarray([healthy, parasites])
 
     def calc_parasitemia(
@@ -164,7 +164,7 @@ class CountCompensator(CountCorrector):
         """
 
         reformatted_counts = self._reformat_7x1_to_2x1(raw_counts)
-        return self.get_res_from_counts(reformatted_counts, units_ul_out=units_ul_out)
+        return self._get_res_from_counts(reformatted_counts, units_ul_out=units_ul_out)
 
     def get_95_bound_and_compensation_from_parasitemia(
         self,
