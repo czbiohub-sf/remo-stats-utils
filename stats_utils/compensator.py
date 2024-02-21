@@ -61,7 +61,7 @@ class CountCompensator(CountCorrector):
             )
 
         m, b, cov_m, cov_b = self._get_fit_metrics(compensation_csv_dir)
-        inv_cmatrix = self.get_matrix(m, b)
+        inv_cmatrix = self._get_matrix(m, b)
         inv_cmatrix_std = self._get_matrix_std(cov_m, cov_b)
 
         rbc_ids = [0, 1]
