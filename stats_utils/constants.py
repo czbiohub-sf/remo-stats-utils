@@ -1,5 +1,8 @@
 from typing import Dict, List
 
+from pathlib import Path
+
+print(curr_dir = Path(__file__).parent.resolve())
 
 # Path to data files
 DATA_DIR = Path("data_files")
