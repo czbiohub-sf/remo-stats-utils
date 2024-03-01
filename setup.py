@@ -24,7 +24,7 @@ setup(
     author_email="michelle.khoo@czbiohub.org",
     license="MIT",
     packages=find_packages(),
-    package_data={'stats_utils': ['data_files/*']},
+    package_data={'stats_utils': ['stats_utils/data_files/*']},
     install_requires=[
         "numpy",
         "pandas",
