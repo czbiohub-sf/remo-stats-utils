@@ -2,10 +2,10 @@ from typing import Dict, List
 
 from pathlib import Path
 
-print(curr_dir = Path(__file__).parent.resolve())
+curr_dir = Path(__file__).parent.resolve()
 
 # Path to data files
-DATA_DIR = Path("data_files")
+DATA_DIR = curr_dir / "data_files"
 
 # Suffixes for data files
 CMATRIX_MEAN_SUFFIX = "-cmatrix-mean.npy"
