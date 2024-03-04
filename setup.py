@@ -16,7 +16,7 @@ def readme():
 
 setup(
     name="stats_utils",
-    version="0.0.2",
+    version="0.0.1",
     description="Statistics utilities for remoscope and corresponding paper",
     long_description=readme(),
     url="https://github.com/czbiohub-sf/remo-stats-utils",
@@ -24,7 +24,10 @@ setup(
     author_email="michelle.khoo@czbiohub.org",
     license="MIT",
     packages=find_packages(),
+<<<<<<< HEAD
     package_data={'stats_utils': ['stats_utils/data_files/*']},
+=======
+>>>>>>> parent of 5ec8a2d (Updated package installation settings)
     install_requires=[
         "numpy",
         "pandas",
