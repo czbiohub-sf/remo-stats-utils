@@ -24,10 +24,8 @@ setup(
     author_email="michelle.khoo@czbiohub.org",
     license="MIT",
     packages=find_packages(),
-<<<<<<< HEAD
     package_data={'stats_utils': ['stats_utils/data_files/*']},
-=======
->>>>>>> parent of 5ec8a2d (Updated package installation settings)
+    include_package_data=True,
     install_requires=[
         "numpy",
         "pandas",
