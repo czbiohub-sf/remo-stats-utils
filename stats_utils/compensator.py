@@ -31,7 +31,7 @@ class CountCompensator(CountCorrector):
         model_name: str,
         clinical: bool = True,
         heatmaps: bool = False,
-        skip: bool = False
+        skip: bool = False,
     ):
         """
         Initialize count compensator
