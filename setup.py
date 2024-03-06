@@ -34,6 +34,8 @@ def get_data_files(parent_dir):
 
 # data_files = get_data_files('stats_utils/data_files')
 data_files = get_data_files('stats_utils/data_files/frightful-wendigo-1931')
+curr_dir = Path(__file__).parent.resolve()
+print(curr_dir)
 
 setup(
     name="stats_utils",
@@ -45,7 +47,8 @@ setup(
     author_email="michelle.khoo@czbiohub.org",
     license="MIT",
     packages=find_packages(),
-    package_data={'stats_utils': data_files},
+    # package_data={'stats_utils': data_files},
+    package_data={'stats_utils': ['../stats_utils/data_files/*']},
     include_package_data=True,
     install_requires=[
         "numpy",
