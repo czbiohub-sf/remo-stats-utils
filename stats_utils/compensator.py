@@ -26,7 +26,7 @@ from stats_utils.corrector import CountCorrector
 
 
 class CountCompensator(CountCorrector):
-    def __init__(self, model_name: str, clinical=True, heatmaps=False):
+    def __init__(self, model_name: str, clinical=True: bool, heatmaps=False: bool, skip=False: bool):
         """
         Initialize count compensator
 
@@ -39,28 +39,38 @@ class CountCompensator(CountCorrector):
         - heatmaps (optional):
             True for heatmap nuked data
             False otherwise (default)
+        - skip (optional):
+            True to skip compensation (will ignore previous clinical and heatmap args in)
+            False to proceed with normal compensation, according to other args in(default)
         """
 
-        # Generate directory for compensation metrics csv
-        if clinical:
-            suffix1 = CLINICAL_COMPENSATION_SUFFIX1
+        if skip:
+            m = 1
+            b = 0
+            cov_m = 0
+            cov_b = 0
         else:
-            suffix1 = CULTURED_COMPENSATION_SUFFIX1
-        if heatmaps:
-            suffix2 = W_HEATMAPS_SUFFIX2
-        else:
-            suffix2 = NO_HEATMAPS_SUFFIX2
-        compensation_csv_dir = str(
-            DATA_DIR / model_name / (model_name + suffix1 + suffix2)
-        )
-
-        # Check that compensation metrics csv exists
-        if not Path(compensation_csv_dir).is_file():
-            raise FileNotFoundError(
-                f"Could not find compensation metrics for {model_name} ({compensation_csv_dir})"
+            # Generate directory for compensation metrics csv
+            if clinical:
+                suffix1 = CLINICAL_COMPENSATION_SUFFIX1
+            else:
+                suffix1 = CULTURED_COMPENSATION_SUFFIX1
+            if heatmaps:
+                suffix2 = W_HEATMAPS_SUFFIX2
+            else:
+                suffix2 = NO_HEATMAPS_SUFFIX2
+            compensation_csv_dir = str(
+                DATA_DIR / model_name / (model_name + suffix1 + suffix2)
             )
 
-        m, b, cov_m, cov_b = self._get_fit_metrics(compensation_csv_dir)
+            # Check that compensation metrics csv exists
+            if not Path(compensation_csv_dir).is_file():
+                raise FileNotFoundError(
+                    f"Could not find compensation metrics for {model_name} ({compensation_csv_dir})"
+                )
+
+            m, b, cov_m, cov_b = self._get_fit_metrics(compensation_csv_dir)
+
         inv_cmatrix = self._get_matrix(m, b)
         inv_cmatrix_std = self._get_matrix_std(cov_m, cov_b)
 
