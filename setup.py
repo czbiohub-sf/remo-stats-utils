@@ -7,23 +7,27 @@ Created on Oct 1, 2021
 """
 
 from setuptools import setup, find_packages
-
-import os
+from pathlib import Path
 
 
 def readme():
     with open("README.md") as f:
         return f.read()
 
-def package_files(directory):
-    paths = []
-    for (path, directories, filenames) in os.walk(directory):
-        for filename in filenames:
-            paths.append(os.path.join('..', path, filename))
-    return paths
+def get_data_files(parent_dir):
 
-extra_files = package_files('stats_utils/data_files/frightful-wendigo-1931')
-print(extra_files)
+    parent_path = Path(directory)
+    child_paths = [path for path in parent_path.iterdir() if path.is_dir()]
+
+    all_files = []
+    for child_path in child_paths:
+        files = [path.as_posix() for path in child_path.iterdir() if path.is_file()]
+        all_files.extend(files)
+
+    return all_files
+
+
+data_files = package_data_files('stats_utils/data_files')
 
 setup(
     name="stats_utils",
@@ -35,7 +39,7 @@ setup(
     author_email="michelle.khoo@czbiohub.org",
     license="MIT",
     packages=find_packages(),
-    package_data={'stats_utils': extra_files},
+    package_data={'stats_utils': data_files},
     include_package_data=True,
     install_requires=[
         "numpy",
