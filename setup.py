@@ -15,8 +15,7 @@ def readme():
         return f.read()
 
 def get_data_files(parent_dir):
-
-    parent_path = Path(directory)
+    parent_path = Path(parent_dir)
     child_paths = [path for path in parent_path.iterdir() if path.is_dir()]
 
     all_files = []
