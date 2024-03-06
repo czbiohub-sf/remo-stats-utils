@@ -5,7 +5,9 @@ Based on cultured lab data
 """
 
 import numpy as np
+import numpy.typing as npt
 
+from typing import Tuple
 from pathlib import Path
 
 from stats_utils.constants import (
