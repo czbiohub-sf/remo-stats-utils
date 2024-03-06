@@ -13,6 +13,15 @@ def readme():
     with open("README.md") as f:
         return f.read()
 
+def package_files(directory):
+    paths = []
+    for (path, directories, filenames) in os.walk(directory):
+        for filename in filenames:
+            paths.append(os.path.join('..', path, filename))
+    return paths
+
+extra_files = package_files('stats_utils/data_files/frightful-wendigo-1931')
+print(extra_files)
 
 setup(
     name="stats_utils",
@@ -24,7 +33,7 @@ setup(
     author_email="michelle.khoo@czbiohub.org",
     license="MIT",
     packages=find_packages(),
-    package_data={'stats_utils': ['stats_utils/data_files/*']},
+    package_data={'stats_utils': extra_files},
     include_package_data=True,
     install_requires=[
         "numpy",
