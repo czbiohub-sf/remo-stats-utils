@@ -4,11 +4,13 @@ For analysis of remoscope results.
 
 This repo includes the data files for deskewing and parasitemia compensation. See "Data files" below for file naming/organization convention.
 
-## Package installation
+## Local package installation
 From top-level folder, run
 ```console
 python3 -m pip install -e .
 ```
+
+As an alternative to local installation, point to this repo and the desired release version in the `install_requires` argument of your codebase's `setup.py`.
 
 ## Data files
 It's important to ensure files are named and organized appropriately so they can be dynamically loaded. Dynamic loading is used to match the data with the YOGO model being run in [ulc-malaria-scope](https://github.com/czbiohub-sf/ulc-malaria-scope).
