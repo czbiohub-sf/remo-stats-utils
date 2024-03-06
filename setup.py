@@ -8,6 +8,8 @@ Created on Oct 1, 2021
 
 from setuptools import setup, find_packages
 
+import os
+
 
 def readme():
     with open("README.md") as f:
