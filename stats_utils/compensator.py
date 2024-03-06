@@ -26,7 +26,13 @@ from stats_utils.corrector import CountCorrector
 
 
 class CountCompensator(CountCorrector):
-    def __init__(self, model_name: str, clinical=True: bool, heatmaps=False: bool, skip=False: bool):
+    def __init__(
+        self,
+        model_name: str,
+        clinical: bool = True,
+        heatmaps: bool = False,
+        skip: bool = False
+    ):
         """
         Initialize count compensator
 
