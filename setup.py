@@ -27,7 +27,7 @@ def get_data_files(parent_dir):
     return all_files
 
 
-data_files = package_data_files('stats_utils/data_files')
+data_files = get_data_files('stats_utils/data_files')
 
 setup(
     name="stats_utils",
