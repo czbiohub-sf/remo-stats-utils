@@ -132,8 +132,7 @@ class CountCompensator(CountCorrector):
 
         return np.asarray([healthy, parasites])
 
-    def calc_parasitemia(
-        self, counts: npt.NDArray) -> float:
+    def calc_parasitemia(self, counts: npt.NDArray) -> float:
         """
         Wrapper for CountCorrector's internal function _calc_parasitemia()
 
@@ -152,7 +151,7 @@ class CountCompensator(CountCorrector):
     ) -> Tuple[float, float]:
         """
         Wrapper for CountCorrector's internal function _get_res_from_counts()
-                
+
         Reformats 7x1 array into required 2x1 array before computing statistics
 
         Input(s)

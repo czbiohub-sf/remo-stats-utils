@@ -5,7 +5,9 @@ Based on cultured lab data
 """
 
 import numpy as np
+import numpy.typing as npt
 
+from typing import Tuple
 from pathlib import Path
 
 from stats_utils.constants import (
@@ -58,8 +60,7 @@ class CountDeskewer(CountCorrector):
             ASEXUAL_PARASITE_CLASS_IDS,
         )
 
-    def calc_parasitemia(
-        self, counts: npt.NDArray) -> float:
+    def calc_parasitemia(self, counts: npt.NDArray) -> float:
         """
         Wrapper for CountCorrector's internal function _calc_parasitemia()
 
@@ -75,7 +76,7 @@ class CountDeskewer(CountCorrector):
     ) -> Tuple[float, float]:
         """
         Wrapper for CountCorrector's internal function _get_res_from_counts()
-                
+
         Input(s)
         - counts:
             Raw cell counts, formatted as 7x1 array with all YOGO classes

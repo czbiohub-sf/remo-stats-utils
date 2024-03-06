@@ -7,6 +7,7 @@ Created on Oct 1, 2021
 """
 
 from setuptools import setup, find_packages
+from pathlib import Path
 
 
 def readme():
@@ -14,9 +15,25 @@ def readme():
         return f.read()
 
 
+def get_data_files(parent_dir):
+    parent_path = Path(parent_dir)
+    child_paths = [path for path in parent_path.iterdir() if path.is_dir()]
+
+    all_files = []
+    for child_path in child_paths:
+        files = [
+            path.resolve().as_posix() for path in child_path.iterdir() if path.is_file()
+        ]
+        all_files.extend(files)
+
+    return all_files
+
+
+data_files = get_data_files("stats_utils/data_files")
+
 setup(
     name="stats_utils",
-    version="0.0.2",
+    version="0.0.3",
     description="Statistics utilities for remoscope and corresponding paper",
     long_description=readme(),
     url="https://github.com/czbiohub-sf/remo-stats-utils",
@@ -24,7 +41,7 @@ setup(
     author_email="michelle.khoo@czbiohub.org",
     license="MIT",
     packages=find_packages(),
-    package_data={'stats_utils': ['stats_utils/data_files/*']},
+    package_data={"stats_utils": data_files},
     include_package_data=True,
     install_requires=[
         "numpy",
