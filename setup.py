@@ -9,6 +9,7 @@ Created on Oct 1, 2021
 from setuptools import setup, find_packages
 from pathlib import Path
 
+import os
 
 def readme():
     with open("README.md") as f:
