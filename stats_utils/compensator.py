@@ -51,10 +51,10 @@ class CountCompensator(CountCorrector):
         """
 
         if skip:
-            m = 1
-            b = 0
-            cov_m = 0
-            cov_b = 0
+            m = 1.0
+            b = 0.0
+            cov_m = 0.0
+            cov_b = 0.0
         else:
             # Generate directory for compensation metrics csv
             if clinical:
