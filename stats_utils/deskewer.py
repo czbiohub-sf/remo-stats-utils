@@ -85,4 +85,4 @@ class CountDeskewer(CountCorrector):
             False to return parasitemia in % (default)
         """
 
-        return self.get_res_from_counts(raw_counts, units_ul_out=units_ul_out)
+        return self._get_res_from_counts(raw_counts, units_ul_out=units_ul_out)
