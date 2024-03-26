@@ -214,7 +214,7 @@ class CountCompensator(CountCorrector):
         healthy = rbcs - parasites
         counts = [healthy, parasites]
 
-        compensated_parasitemia, bound = self.get_res_from_counts(
+        compensated_parasitemia, bound = self._get_res_from_counts(
             counts, units_ul_out=units_ul_out
         )
 
