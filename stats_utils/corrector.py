@@ -126,19 +126,22 @@ class CountCorrector:
 
         # Use rule of 3 if there are no parasites
         if parasites == 0:
-            bound = 3 / corrected_counts[YOGO_CLASS_IDX_MAP["healthy"]]
+            rel_bound = 3 / corrected_counts[YOGO_CLASS_IDX_MAP["healthy"]]
         else:
-            bound = 1.69 * self._calc_parasitemia_rel_err(
+            rel_bound = 1.69 * self._calc_parasitemia_rel_err(
                 corrected_counts, count_vars, parasites=parasites
             )
+
+        # Convert relative error into absolute error
+        abs_bound = rel_bound * parasitemia
 
         if units_ul_out:
             return (
                 parasitemia * PARASITES_P_UL_PER_PERCENT,
-                bound * PARASITES_P_UL_PER_PERCENT,
+                abs_bound * PARASITES_P_UL_PER_PERCENT,
             )
         else:
-            return parasitemia, bound
+            return parasitemia, abs_bound
 
     def _get_95_confidence_bound(self, parasitemia: float, bound: float) -> List[float]:
         """
