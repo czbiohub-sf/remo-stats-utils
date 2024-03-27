@@ -207,10 +207,9 @@ class CountCompensator(CountCorrector):
         """
         if units_ul_in:
             raw_parasitemia /= PARASITES_P_UL_PER_PERCENT
-        parasitemia_fraction = raw_parasitemia / 100.0
 
         # Compute counts based on parasitemia and rbcs
-        parasites = parasitemia_fraction * rbcs
+        parasites = raw_parasitemia * rbcs
         healthy = rbcs - parasites
         counts = [healthy, parasites]
 
