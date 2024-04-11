@@ -188,7 +188,7 @@ class CountCompensator(CountCorrector):
         rbcs: Union[int, float],
         units_ul_in: bool,
         units_ul_out: bool = False,
-    ) -> Tuple[float, List[float]]:
+    ) -> Tuple[float, float]:
         """
         Return compensated parasitemia and 95% confidence bound based on raw parasitemia and total rbcs
 
