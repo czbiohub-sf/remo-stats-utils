@@ -206,6 +206,10 @@ class CountCompensator(CountCorrector):
             True to return parasitemia in parasitemia/uL
             False to return parasitemia in % (default)
         """
+
+        if raw_parasitemia < 0:
+            raw_parasitemia = 0
+
         if units_ul_in:
             raw_parasitemia /= PARASITES_P_UL_PER_PERCENT
 
