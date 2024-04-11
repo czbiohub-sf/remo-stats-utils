@@ -33,7 +33,7 @@ data_files = get_data_files("stats_utils/data_files")
 
 setup(
     name="stats_utils",
-    version="0.0.8",
+    version="0.0.9",
     description="Statistics utilities for remoscope and corresponding paper",
     long_description=readme(),
     url="https://github.com/czbiohub-sf/remo-stats-utils",

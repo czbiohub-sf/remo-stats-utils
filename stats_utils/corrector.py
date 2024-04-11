@@ -126,14 +126,12 @@ class CountCorrector:
 
         # Use rule of 3 if there are no parasites
         if parasites == 0:
-            rel_bound = 3 / corrected_counts[YOGO_CLASS_IDX_MAP["healthy"]]
+            abs_bound = 100 * 3 / corrected_counts[YOGO_CLASS_IDX_MAP["healthy"]]
         else:
             rel_bound = 1.69 * self._calc_parasitemia_rel_err(
                 corrected_counts, count_vars, parasites=parasites
             )
-
-        # Convert relative error into absolute error
-        abs_bound = rel_bound * parasitemia
+            abs_bound = rel_bound * parasitemia        
 
         if units_ul_out:
             return (
