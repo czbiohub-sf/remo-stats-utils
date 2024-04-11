@@ -218,6 +218,4 @@ class CountCompensator(CountCorrector):
             counts, units_ul_out=units_ul_out
         )
 
-        return compensated_parasitemia, self._get_95_confidence_bound(
-            compensated_parasitemia, bound
-        )
+        return compensated_parasitemia, bound
