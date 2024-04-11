@@ -17,7 +17,6 @@ from stats_utils.constants import (
     CLINICAL_COMPENSATION_SUFFIX1,
     NO_HEATMAPS_SUFFIX2,
     W_HEATMAPS_SUFFIX2,
-    CONFIDENCE_THRESHOLD,
     PARASITES_P_UL_PER_PERCENT,
     YOGO_CLASS_IDX_MAP,
     ASEXUAL_PARASITE_CLASS_IDS,
@@ -29,6 +28,7 @@ class CountCompensator(CountCorrector):
     def __init__(
         self,
         model_name: str,
+        conf_thresh: float,
         clinical: bool = True,
         heatmaps: bool = False,
         skip: bool = False,
@@ -50,6 +50,7 @@ class CountCompensator(CountCorrector):
             False to proceed with normal compensation, according to other args in(default)
         """
 
+        self.conf_thresh = conf_thresh
         if skip:
             m = 1.0
             b = 0.0
@@ -100,7 +101,7 @@ class CountCompensator(CountCorrector):
         """
 
         df = pd.read_csv(compensation_csv_dir, dtype=np.float64)
-        row = df.loc[df["conf_val"] == CONFIDENCE_THRESHOLD]
+        row = df.loc[df["conf_val"] == self.conf_thresh]
 
         # Adjust b for parasitemia % instead of parasites per uL
         fit_b = row["fit_b"].item() / PARASITES_P_UL_PER_PERCENT

@@ -17,9 +17,6 @@ CULTURED_COMPENSATION_SUFFIX1 = "-cultured-compensation"
 W_HEATMAPS_SUFFIX2 = "-with-heatmaps.csv"
 NO_HEATMAPS_SUFFIX2 = "-no-heatmaps.csv"
 
-# Confidence threshold
-CONFIDENCE_THRESHOLD = 0.90
-
 # YOGO class IDs
 YOGO_CLASS_ORDERING = [
     "healthy",
