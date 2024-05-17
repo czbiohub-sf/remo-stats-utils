@@ -131,7 +131,7 @@ class CountCorrector:
             rel_bound = 1.69 * self._calc_parasitemia_rel_err(
                 corrected_counts, count_vars, parasites=parasites
             )
-            abs_bound = rel_bound * parasitemia        
+            abs_bound = rel_bound * parasitemia
 
         if units_ul_out:
             return (
