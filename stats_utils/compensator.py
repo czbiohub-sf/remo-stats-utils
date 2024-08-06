@@ -17,7 +17,7 @@ from stats_utils.constants import (
     CLINICAL_COMPENSATION_SUFFIX1,
     NO_HEATMAPS_SUFFIX2,
     W_HEATMAPS_SUFFIX2,
-    PARASITES_P_UL_PER_PERCENT,
+    RBCS_P_UL,
     YOGO_CLASS_IDX_MAP,
     ASEXUAL_PARASITE_CLASS_IDS,
 )
@@ -103,9 +103,9 @@ class CountCompensator(CountCorrector):
         df = pd.read_csv(compensation_csv_dir, dtype=np.float64)
         row = df.loc[df["conf_val"] == self.conf_thresh]
 
-        # Adjust b for parasitemia % instead of parasites per uL
-        fit_b = row["fit_b"].item() / PARASITES_P_UL_PER_PERCENT
-        cov_b = row["cov_b"].item() / PARASITES_P_UL_PER_PERCENT
+        # Adjust b for parasitemia fractional percentage instead of parasites per uL
+        fit_b = row["fit_b"].item() / RBCS_P_UL
+        cov_b = row["cov_b"].item() / RBCS_P_UL
 
         return row["fit_m"].item(), fit_b, row["cov_m"].item(), cov_b
 
@@ -196,22 +196,22 @@ class CountCompensator(CountCorrector):
 
         Input(s)
         - raw_parasitemia:
-            Uncorrected parasitemia estimate
+            Uncorrected parasitemia estimate, given as fractional percentage
         - rbcs:
             Total count of rbcs
         - units_ul_in:
             True if raw_parasitemia is in parasites/uL
-            False if raw_parasitemia is in %
+            False if raw_parasitemia is in fractional percentage
         - units_ul_out (optional):
             True to return parasitemia in parasitemia/uL
-            False to return parasitemia in % (default)
+            False to return parasitemia in fractional percentage (default)
         """
 
         if raw_parasitemia < 0:
             raw_parasitemia = 0
 
         if units_ul_in:
-            raw_parasitemia /= PARASITES_P_UL_PER_PERCENT
+            raw_parasitemia /= RBCS_P_UL
 
         # Compute counts based on parasitemia and rbcs
         parasites = raw_parasitemia * rbcs

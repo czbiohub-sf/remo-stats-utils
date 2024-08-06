@@ -49,4 +49,4 @@ PARASITE_CLASS_IDS: List[int] = [
 ]
 
 # Parasitemia unit conversion
-PARASITES_P_UL_PER_PERCENT = 5e6  # parasites/uL = parasitemia % x 5E6
+RBCS_P_UL = 5e6  # parasites/uL = parasitemia fractional percentage x RBCS_P_UL

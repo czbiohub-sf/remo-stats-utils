@@ -11,7 +11,7 @@ from abc import ABC, abstractmethod
 from stats_utils.constants import (
     YOGO_CLASS_ORDERING,
     YOGO_CLASS_IDX_MAP,
-    PARASITES_P_UL_PER_PERCENT,
+    RBCS_P_UL,
 )
 
 
@@ -75,7 +75,7 @@ class CountCorrector:
         self, counts: npt.NDArray, parasites: Union[None, float] = None
     ) -> float:
         """
-        Return total parasitemia count
+        Return total parasitemia count as fractional percentage
         """
         rbcs = np.sum(counts[self.rbc_ids])
         if parasites is None:
@@ -113,6 +113,13 @@ class CountCorrector:
         Return parasitemia and 95% confidence bound based on class counts
 
         See remoscope manuscript for full derivation
+
+        Input(s)
+        - raw_counts:
+            Raw cell counts, formatted as 7x1 array with all YOGO classes
+        - units_ul_out (optional):
+            True to return parasitemia in parasitemia/uL
+            False to return parasitemia in % (default)
         """
         # Correct counts
         corrected_counts = self._correct_counts(raw_counts)
@@ -126,17 +133,17 @@ class CountCorrector:
 
         # Use rule of 3 if there are no parasites
         if parasites == 0:
-            abs_bound = 100 * 3 / corrected_counts[YOGO_CLASS_IDX_MAP["healthy"]]
+            abs_bound = 100 * 3 / corrected_counts[YOGO_CLASS_IDX_MAP["healthy"]] # unit: %
         else:
             rel_bound = 1.69 * self._calc_parasitemia_rel_err(
                 corrected_counts, count_vars, parasites=parasites
             )
-            abs_bound = rel_bound * parasitemia        
+            abs_bound = rel_bound * parasitemia # unit: %
 
         if units_ul_out:
             return (
-                parasitemia * PARASITES_P_UL_PER_PERCENT,
-                abs_bound * PARASITES_P_UL_PER_PERCENT,
+                parasitemia * RBCS_P_UL, # unit: parasitemia / uL
+                abs_bound * RBCS_P_UL, # unit: parasitemia / uL
             )
         else:
             return parasitemia, abs_bound
