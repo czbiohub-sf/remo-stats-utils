@@ -121,7 +121,9 @@ class CountCorrector:
         rbcs = np.sum(corrected_counts[self.rbc_ids])
 
         # Calc_parasitemia
-        parasitemia = 100.0 * self._calc_parasitemia(corrected_counts, parasites=parasites)
+        parasitemia = 100.0 * self._calc_parasitemia(
+            corrected_counts, parasites=parasites
+        )
 
         # Get uncertainties
         count_vars = self._calc_count_vars(raw_counts)
@@ -129,17 +131,21 @@ class CountCorrector:
         # Use rule of 3 if there are no parasites
         if parasites == 0:
             parasites_95_conf_bounds = 3 / rbcs
-            parasitemia_95_conf_bounds = 100 * parasites_95_conf_bounds / rbcs # unit: %
+            parasitemia_95_conf_bounds = (
+                100 * parasites_95_conf_bounds / rbcs
+            )  # unit: %
         else:
             parasites_95_conf_bounds = 1.69 * self._calc_parasites_abs_std(
                 corrected_counts, count_vars, parasites=parasites
             )
-            parasitemia_95_conf_bounds = 100 * parasites_95_conf_bounds / rbcs # unit: %
+            parasitemia_95_conf_bounds = (
+                100 * parasites_95_conf_bounds / rbcs
+            )  # unit: %
 
         if units_ul_out:
             return (
-                parasitemia * RBCS_P_UL, # unit: parasitemia / uL
-                parasitemia_95_conf_bounds * RBCS_P_UL, # unit: parasitemia / uL
+                parasitemia * RBCS_P_UL,  # unit: parasitemia / uL
+                parasitemia_95_conf_bounds * RBCS_P_UL,  # unit: parasitemia / uL
             )
         else:
             return parasitemia, parasitemia_95_conf_bounds
