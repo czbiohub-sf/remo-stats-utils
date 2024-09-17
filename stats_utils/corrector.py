@@ -130,7 +130,7 @@ class CountCorrector:
 
         # Use rule of 3 if there are no parasites
         if parasites == 0:
-            parasites_95_conf_bounds = 3 / rbcs
+            parasites_95_conf_bounds = 3
             parasitemia_95_conf_bounds = (
                 100 * parasites_95_conf_bounds / rbcs
             )  # unit: %
