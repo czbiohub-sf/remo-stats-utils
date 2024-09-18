@@ -83,7 +83,7 @@ class CountCorrector:
 
         return 0 if rbcs == 0 else parasites / rbcs
 
-    def _calc_parasitemia_rel_err(
+    def _calc_parasites_abs_std(
         self,
         corrected_counts: npt.NDArray,
         count_vars: npt.NDArray,
@@ -98,13 +98,7 @@ class CountCorrector:
             parasites = np.sum(corrected_counts[self.parasite_ids])
 
         parasite_count_vars = count_vars[self.parasite_ids]
-
-        # Compute error
-        return (
-            np.inf
-            if parasites == 0
-            else np.sqrt(np.sum(parasite_count_vars)) / parasites
-        )
+        return np.sqrt(np.sum(parasite_count_vars))
 
     def _get_res_from_counts(
         self, raw_counts: npt.NDArray, units_ul_out: bool = False
@@ -124,29 +118,37 @@ class CountCorrector:
         # Correct counts
         corrected_counts = self._correct_counts(raw_counts)
         parasites = np.sum(corrected_counts[self.parasite_ids])
+        rbcs = np.sum(corrected_counts[self.rbc_ids])
 
         # Calc_parasitemia
-        parasitemia = self._calc_parasitemia(corrected_counts, parasites=parasites)
+        parasitemia = 100.0 * self._calc_parasitemia(
+            corrected_counts, parasites=parasites
+        )
 
         # Get uncertainties
         count_vars = self._calc_count_vars(raw_counts)
 
         # Use rule of 3 if there are no parasites
         if parasites == 0:
-            abs_bound = 100 * 3 / corrected_counts[YOGO_CLASS_IDX_MAP["healthy"]] # unit: %
+            parasites_95_conf_bounds = 3.0
+            parasitemia_95_conf_bounds = (
+                100 * parasites_95_conf_bounds / rbcs
+            )  # unit: %
         else:
-            rel_bound = 1.69 * self._calc_parasitemia_rel_err(
+            parasites_95_conf_bounds = 1.69 * self._calc_parasites_abs_std(
                 corrected_counts, count_vars, parasites=parasites
             )
-            abs_bound = rel_bound * parasitemia # unit: %
+            parasitemia_95_conf_bounds = (
+                100 * parasites_95_conf_bounds / rbcs
+            )  # unit: %
 
         if units_ul_out:
             return (
-                parasitemia * RBCS_P_UL, # unit: parasitemia / uL
-                abs_bound * RBCS_P_UL, # unit: parasitemia / uL
+                parasitemia * RBCS_P_UL,  # unit: parasitemia / uL
+                parasitemia_95_conf_bounds * RBCS_P_UL,  # unit: parasitemia / uL
             )
         else:
-            return parasitemia, abs_bound
+            return parasitemia, parasitemia_95_conf_bounds
 
     def _get_95_confidence_bound(self, parasitemia: float, bound: float) -> List[float]:
         """
