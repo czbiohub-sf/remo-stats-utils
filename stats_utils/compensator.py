@@ -78,7 +78,9 @@ class CountCompensator(CountCorrector):
 
             m, b, cov_m, cov_b = self._get_fit_metrics(compensation_csv_dir)
             # ignore negative b
-            b = 0.0 if b < 0 else b
+            if b < 0:
+                b = 0
+                cov_b = 0
 
         inv_cmatrix = self._get_matrix(m, b)
         inv_cmatrix_std = self._get_matrix_std(cov_m, cov_b)
