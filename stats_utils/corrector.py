@@ -144,8 +144,10 @@ class CountCorrector:
 
         if units_ul_out:
             return (
-                parasitemia * RBCS_P_UL,  # unit: parasitemia / uL
-                parasitemia_95_conf_bounds * RBCS_P_UL,  # unit: parasitemia / uL
+                parasitemia * RBCS_P_UL / 100.0,  # unit: parasitemia / uL
+                parasitemia_95_conf_bounds
+                * RBCS_P_UL
+                / 100.0,  # unit: parasitemia / uL
             )
         else:
             return parasitemia, parasitemia_95_conf_bounds
