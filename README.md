@@ -13,7 +13,7 @@ python3 -m pip install -e .
 As an alternative to local installation, point to this repo and the desired release version in the `install_requires` argument of your codebase's `setup.py`.
 
 ## Data files
-It's important to ensure files are named and organized appropriately so they can be dynamically loaded. Dynamic loading is used to match the data with the YOGO model being run in [ulc-malaria-scope](https://github.com/czbiohub-sf/ulc-malaria-scope).
+remo-stats-utils requires the data files to be organized in a particular schema for dynamic loading. Dynamic loading is used to match the data with the YOGO model being run in [ulc-malaria-scope](https://github.com/czbiohub-sf/ulc-malaria-scope).
 
 Let the model ID include the model name and number, separated by dashes:
 * Group files by model ID in the subfolder ```data_files/<model ID>```
