@@ -37,7 +37,7 @@ setup(
     url="https://github.com/czbiohub-sf/remo-stats-utils",
     author="Bioengineering | CZ Biohub SF",
     author_email="michelle.khoo@czbiohub.org",
-    license="MIT",
+    license="BSD-3-Clause",
     packages=find_packages(),
     package_data={"stats_utils": data_files},
     include_package_data=True,
