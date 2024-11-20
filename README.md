@@ -1,16 +1,15 @@
 # Statistics utils
+This repo contains the statistical analysis tools used to compute uncertainty estimates for Remoscope data. The calculations are used both on the Remoscope instrument as well as 
+See Supplementary Note 2 in the Remoscope preprint for analytical expressions of the calculations: 
 
-For analysis of remoscope results.
+![image](https://github.com/user-attachments/assets/0cfd37a6-c543-4873-9a64-bd2e5f8506b7)
 
-This repo includes the data files for deskewing and parasitemia compensation. See "Data files" below for file naming/organization convention.
+There are also additional tools, such as matrix deskewing analysis, which we explored but did not get implemented in the main project yet. 
 
 ## Local package installation
-From top-level folder, run
 ```console
-python3 -m pip install -e .
+python3 -m pip install .
 ```
-
-As an alternative to local installation, point to this repo and the desired release version in the `install_requires` argument of your codebase's `setup.py`.
 
 ## Data files
 It's important to ensure files are named and organized appropriately so they can be dynamically loaded. Dynamic loading is used to match the data with the YOGO model being run in [ulc-malaria-scope](https://github.com/czbiohub-sf/ulc-malaria-scope).
