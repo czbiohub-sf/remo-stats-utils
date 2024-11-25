@@ -38,9 +38,11 @@ class CountCorrector(ABC):
     @abstractmethod
     def get_res_from_counts(self, raw_counts: npt.NDArray, units_ul_out: bool = False
     ) -> Tuple[float, float]:
+        pass
 
     @abstractmethod
     def calc_parasitemia(self, counts: npt.NDArray) -> float:
+        pass
 
     def _correct_counts(self, raw_counts: npt.NDArray):
         """
