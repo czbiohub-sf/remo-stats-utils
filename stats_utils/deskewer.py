@@ -67,7 +67,7 @@ class CountDeskewer(CountCorrector):
 
     def calc_parasitemia(self, counts: npt.NDArray) -> float:
         """
-        Wrapper for CountCorrector's internal function _calc_parasitemia()
+        Wrapper for base class method _calc_parasitemia()
 
         Input(s)
         - counts:
@@ -80,7 +80,7 @@ class CountDeskewer(CountCorrector):
         self, raw_counts: npt.NDArray, units_ul_out: bool = False
     ) -> Tuple[float, float]:
         """
-        Wrapper for CountCorrector's internal function _get_res_from_counts()
+        Wrapper for base class method _get_res_from_counts()
 
         Input(s)
         - counts:
