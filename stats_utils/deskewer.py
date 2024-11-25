@@ -70,7 +70,8 @@ class CountDeskewer(CountCorrector):
 
     def calc_parasitemia(self, counts: npt.NDArray) -> float:
         """
-        Wrapper for base class method _calc_parasitemia()
+        Wrapper for base class method _calc_parasitemia(), computes parasitemia
+        without deskewing
 
         Input(s)
         - counts:
@@ -83,7 +84,8 @@ class CountDeskewer(CountCorrector):
         self, raw_counts: npt.NDArray, units_ul_out: bool = False
     ) -> Tuple[float, float]:
         """
-        Wrapper for base class method _get_res_from_counts()
+        Wrapper for base class method _get_res_from_counts(), returns deskewed
+        parasitemia and corresponding 95% confidence bounds
 
         Input(s)
         - counts:

@@ -45,13 +45,13 @@ class_counts = np.array([
     200, # misc
 ])
 
-# Get parasitemia only
+# Compute parasitemia without correction
 parasitemia = corrector.calc_parasitemia(class_counts)
 
-# Get parasitemia and 95% confidence bounds as parasites/uL
+# Get corrected parasitemia and 95% confidence bounds as parasites/uL
 parasitemia, conf_bounds = corrector.get_res_from_counts(class_counts, units_ul_out=True)
 
-# Get parasitemia and 95% confidence bounds as percentage
+# Get corrected parasitemia and 95% confidence bounds as percentage
 parasitemia, conf_bounds = corrector.get_res_from_counts(class_counts, units_ul_out=False)
 ```
 

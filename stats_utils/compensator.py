@@ -160,7 +160,8 @@ class CountCompensator(CountCorrector):
 
     def calc_parasitemia(self, counts: npt.NDArray) -> float:
         """
-        Wrapper for base class method _calc_parasitemia()
+        Wrapper for base class method _calc_parasitemia(), computes parasitemia
+        without compensation
 
         Reformats 7x1 array into required 2x1 array before computing statistics
 
@@ -176,7 +177,8 @@ class CountCompensator(CountCorrector):
         self, raw_counts: npt.NDArray, units_ul_out: bool = False
     ) -> Tuple[float, float]:
         """
-        Wrapper for base class method _get_res_from_counts()
+        Wrapper for base class method _get_res_from_counts(), returns compensated
+        parasitemia and corresponding 95% confidence bounds
 
         Reformats 7x1 array into required 2x1 array before computing statistics
 
