@@ -18,7 +18,7 @@ import numpy.typing as npt
 from typing import List, Tuple, Union
 from abc import ABC, abstractmethod
 
-from stats_utils.constants RBCS_P_UL
+from stats_utils.constants import RBCS_P_UL
 
 
 class CountCorrector(ABC):
