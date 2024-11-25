@@ -11,7 +11,6 @@ matrix term is provided as a matrix input argument. In case 0 parasites are coun
 using the rule of three.
 """
 
-
 import numpy as np
 import numpy.typing as npt
 
