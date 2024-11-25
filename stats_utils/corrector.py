@@ -21,7 +21,7 @@ from abc import ABC, abstractmethod
 from stats_utils.constants RBCS_P_UL
 
 
-class CountCorrector:
+class CountCorrector(ABC):
     def __init__(
         self,
         inv_cmatrix: npt.NDArray,
@@ -34,6 +34,13 @@ class CountCorrector:
 
         self.rbc_ids = rbc_ids
         self.parasite_ids = parasite_ids
+
+    @abstractmethod
+    def get_res_from_counts(self, raw_counts: npt.NDArray, units_ul_out: bool = False
+    ) -> Tuple[float, float]:
+
+    @abstractmethod
+    def calc_parasitemia(self, counts: npt.NDArray) -> float:
 
     def _correct_counts(self, raw_counts: npt.NDArray):
         """
