@@ -1,7 +1,12 @@
 """
-YOGO class deskewing using inverse confusion matrix
+Correct for skew in YOGO classification, where skew is represented by the confusion matrix.
 
-Based on cultured lab data
+The correcting transformation matrix used by the base class CountCorrector is the inverse
+confusion matrix. This matrix is computed from the average of k partitions of training data,
+inspired by k-fold validation.
+
+The error in each inverse confusion matrix term is individually computed as the standard deviation
+across k confusion matrices.
 """
 
 import numpy as np

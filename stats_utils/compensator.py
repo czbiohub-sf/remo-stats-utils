@@ -1,14 +1,21 @@
 """
-YOGO class compensation using y = mx + b fit
+Class compensation using y = mx + b fit, where m and b are computed by comparing Remoscope
+parasitemia estimates with clinical PCR values.
 
-Based on clinical Uganda data
+The correcting transformation matrix used by the base class CountCorrector is a matrix 
+representation of y = mx + b. Before matrix multiplication, the 7x1 row vector of raw class
+counts is simplified to a 2x1 vector: [healthy, parasite (all asexual life stages)]
+
+The error in each transformation matrix term is based on the standard deviation of the m and b
+values from the linear fit.
 """
+
 
 import numpy as np
 import numpy.typing as npt
 import pandas as pd
 
-from typing import List, Tuple, Union
+from typing import Tuple, Union
 from pathlib import Path
 
 from stats_utils.constants import (

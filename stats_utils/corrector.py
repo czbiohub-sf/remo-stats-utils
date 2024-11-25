@@ -1,6 +1,16 @@
 """
-Base class for correcting YOGO class counts
+Abstract base class for correcting YOGO class counts.
+
+The class count correction is generalizable and is computed by multiplying a row vector of 
+raw cell counts by a correcting transformation matrix. After correction, the parasitemia and
+corresponding 95% confidence bound is computed.
+
+The 95% confidence bound is computed by propogating errors in the linear expansion of this matrix
+multiplication. The error in each raw count is based on Poisson and the error from each confusion
+matrix term is an instantiation parameter. In case 0 parasites are counted, the error is computed
+using the rule of three.
 """
+
 
 import numpy as np
 import numpy.typing as npt
@@ -8,11 +18,7 @@ import numpy.typing as npt
 from typing import List, Tuple, Union
 from abc import ABC, abstractmethod
 
-from stats_utils.constants import (
-    YOGO_CLASS_ORDERING,
-    YOGO_CLASS_IDX_MAP,
-    RBCS_P_UL,
-)
+from stats_utils.constants RBCS_P_UL
 
 
 class CountCorrector:
