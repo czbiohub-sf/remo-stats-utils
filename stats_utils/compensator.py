@@ -199,7 +199,7 @@ class CountCompensator(CountCorrector):
         units_ul_out: bool = False,
     ) -> Tuple[float, float]:
         """
-        Return compensated parasitemia and 95% confidence bound based on raw parasitemia and
+        Return compensated parasitemia and 95% confidence bounds based on raw parasitemia and
         total rbcs
 
         Input(s)

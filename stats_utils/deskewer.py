@@ -7,6 +7,9 @@ inspired by k-fold validation.
 
 The error in each inverse confusion matrix term is individually computed as the standard deviation
 across k confusion matrices.
+
+See https://github.com/czbiohub-sf/lfm-data-utilities/blob/main/lfm_data_utilities/model_evaluations/yogo/n_fold_testing/n_fold_test.py
+for k-fold inspired confusion matrix analysis.
 """
 
 import numpy as np

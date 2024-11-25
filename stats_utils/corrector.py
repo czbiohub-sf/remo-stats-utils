@@ -7,7 +7,7 @@ corresponding 95% confidence bound is computed.
 
 The 95% confidence bound is computed by propogating errors in the linear expansion of this matrix
 multiplication. The error in each raw count is based on Poisson and the error from each confusion
-matrix term is an instantiation parameter. In case 0 parasites are counted, the error is computed
+matrix term is provided as a matrix input argument. In case 0 parasites are counted, the error is computed
 using the rule of three.
 """
 
@@ -125,7 +125,7 @@ class CountCorrector(ABC):
         self, raw_counts: npt.NDArray, units_ul_out: bool = False
     ) -> Tuple[float, float]:
         """
-        Return parasitemia and 95% confidence bound
+        Return parasitemia and 95% confidence bounds
 
         Input(s)
         - raw_counts:
@@ -173,7 +173,7 @@ class CountCorrector(ABC):
 
     def _get_95_confidence_bound(self, parasitemia: float, bound: float) -> List[float]:
         """
-        Return 95% confidence bound on parasitemia estimate
+        Return 95% confidence bounds on parasitemia estimate
         """
         lower_bound = max(0, parasitemia - bound)
         upper_bound = parasitemia + bound
