@@ -37,7 +37,7 @@ class CountCorrector:
 
     def _correct_counts(self, raw_counts: npt.NDArray):
         """
-        Correct raw counts using inverse confusion matrix
+        Correct raw counts using transformation matrix
 
         Returns list of corrected cell counts and rounds negative values to 0
         """
@@ -50,9 +50,8 @@ class CountCorrector:
 
     def _calc_count_vars(self, raw_counts: npt.NDArray) -> npt.NDArray:
         """
-        Return absolute uncertainty of each class count based on deskewing and Poisson statistics
-
-        See remoscope manuscript for full derivation
+        Return absolute uncertainty of each class count based on correction matrix error
+        and Poisson statistics
         """
         poisson_terms = self._calc_poisson_var_terms(raw_counts)
         deskew_terms = self._calc_deskew_var_terms(raw_counts)
@@ -63,17 +62,13 @@ class CountCorrector:
 
     def _calc_poisson_var_terms(self, raw_counts: npt.NDArray) -> npt.NDArray:
         """
-        Return absolute uncertainty term of each class count based on Poisson statistics
-
-        See remoscope manuscript for full derivation
+        Return absolute uncertainty of each class count based on Poisson statistics
         """
         return np.matmul(raw_counts, np.square(self.inv_cmatrix))
 
     def _calc_deskew_var_terms(self, raw_counts: npt.NDArray) -> npt.NDArray:
         """
-        Return absolute uncertainty term of each class count based on correction
-
-        See remoscope manuscript for full derivation
+        Return absolute uncertainty of each class count based on correction
         """
         return np.matmul(np.square(raw_counts), np.square(self.inv_cmatrix_std))
 
@@ -81,7 +76,13 @@ class CountCorrector:
         self, counts: npt.NDArray, parasites: Union[None, float] = None
     ) -> float:
         """
-        Return total parasitemia count as fractional percentage
+        Return total parasitemia as fractional percentage
+
+        Input(s)
+        - counts:
+            Cell counts, formatted as a row vector
+        - parasites (optional):
+            Input parasite count if it has been previously computed
         """
         rbcs = np.sum(counts[self.rbc_ids])
         if parasites is None:
@@ -96,9 +97,16 @@ class CountCorrector:
         parasites: Union[None, float] = None,
     ) -> float:
         """
-        Return relative uncertainty of total parasitemia count
+        Return absolute uncertainty of corrected parasitemia
 
-        See remoscope manuscript for full derivation
+        Input(s)
+        - corrected_counts:
+            Corrected cell counts, formatted as a row vector
+        - count_vars:
+            Absolute uncertainty of each class count, including Poisson error and
+            confusion matrix error
+        - parasites (optional):
+            Input parasite count if it has been previously computed
         """
         if parasites is None:
             parasites = np.sum(corrected_counts[self.parasite_ids])
@@ -110,13 +118,11 @@ class CountCorrector:
         self, raw_counts: npt.NDArray, units_ul_out: bool = False
     ) -> Tuple[float, float]:
         """
-        Return parasitemia and 95% confidence bound based on class counts
-
-        See remoscope manuscript for full derivation
+        Return parasitemia and 95% confidence bound
 
         Input(s)
         - raw_counts:
-            Raw cell counts, formatted as 7x1 array with all YOGO classes
+            Raw cell counts, formatted as a row vector
         - units_ul_out (optional):
             True to return parasitemia in parasitemia/uL
             False to return parasitemia in % (default)
