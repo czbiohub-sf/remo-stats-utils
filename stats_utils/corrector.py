@@ -36,7 +36,8 @@ class CountCorrector(ABC):
         self.parasite_ids = parasite_ids
 
     @abstractmethod
-    def get_res_from_counts(self, raw_counts: npt.NDArray, units_ul_out: bool = False
+    def get_res_from_counts(
+        self, raw_counts: npt.NDArray, units_ul_out: bool = False
     ) -> Tuple[float, float]:
         pass
 
