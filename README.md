@@ -5,7 +5,7 @@ Generates parasitemia estimates and corresponding 95% confidence bounds for Remo
 This repo includes the data files for deskewing and parasitemia compensation . See "Data files" below for file naming/organization convention.
 
 ## Local package installation
-From top-level folder, run
+From the top-level folder, run
 ```console
 python3 -m pip install -e .
 ```
