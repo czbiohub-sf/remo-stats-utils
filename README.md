@@ -1,16 +1,14 @@
 # Statistics utils
+This repo contains the statistical analysis tools used to compute uncertainty estimates for Remoscope data. The calculations are used both on the Remoscope instrument as well as Supplementary Note 2 in the Remoscope preprint for analytical expressions of the calculations: 
 
-Generates parasitemia estimates and corresponding 95% confidence bounds for Remoscope. Intended for use with [YOGO](https://github.com/czbiohub-sf/yogo) classifications.
+![image](https://github.com/user-attachments/assets/0cfd37a6-c543-4873-9a64-bd2e5f8506b7)
 
-This repo includes the data files for deskewing and parasitemia compensation . See "Data files" below for file naming/organization convention.
+There are also additional tools, such as matrix deskewing analysis, which we explored but did not get implemented in the main project yet. 
 
 ## Local package installation
-From the top-level folder, run
 ```console
-python3 -m pip install -e .
+python3 -m pip install .
 ```
-
-As an alternative to local installation, point to this repo and the desired release version in the `install_requires` argument of your codebase's `setup.py`.
 
 ## Usage
 Use `CountCompensator` to correct parasitemia estimates and compute 95% confidence bounds according to a linear fit `y = mx + b`. Example instantiation (see documentation in `compensator.py` for input argument descriptions):
