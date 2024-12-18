@@ -1,7 +1,15 @@
 """
-YOGO class deskewing using inverse confusion matrix
+Correct for skew in YOGO classification, where skew is represented by the confusion matrix.
 
-Based on cultured lab data
+The correcting transformation matrix used by the base class CountCorrector is the inverse
+confusion matrix. This matrix is computed from the average of k partitions of training data,
+inspired by k-fold validation.
+
+The error in each inverse confusion matrix term is individually computed as the standard deviation
+across k confusion matrices.
+
+See https://github.com/czbiohub-sf/lfm-data-utilities/blob/main/lfm_data_utilities/model_evaluations/yogo/n_fold_testing/n_fold_test.py
+for k-fold inspired confusion matrix analysis.
 """
 
 import numpy as np
@@ -62,7 +70,8 @@ class CountDeskewer(CountCorrector):
 
     def calc_parasitemia(self, counts: npt.NDArray) -> float:
         """
-        Wrapper for CountCorrector's internal function _calc_parasitemia()
+        Wrapper for base class method _calc_parasitemia(), computes parasitemia
+        without deskewing
 
         Input(s)
         - counts:
@@ -75,7 +84,8 @@ class CountDeskewer(CountCorrector):
         self, raw_counts: npt.NDArray, units_ul_out: bool = False
     ) -> Tuple[float, float]:
         """
-        Wrapper for CountCorrector's internal function _get_res_from_counts()
+        Wrapper for base class method _get_res_from_counts(), returns deskewed
+        parasitemia and corresponding 95% confidence bounds
 
         Input(s)
         - counts:

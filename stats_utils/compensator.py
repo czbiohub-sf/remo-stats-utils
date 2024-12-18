@@ -1,14 +1,21 @@
 """
-YOGO class compensation using y = mx + b fit
+Class compensation using y = mx + b fit, where m and b are computed by comparing Remoscope
+parasitemia estimates with clinical PCR values.
 
-Based on clinical Uganda data
+The correcting transformation matrix used by the base class CountCorrector is a matrix 
+representation of y = mx + b. Before matrix multiplication, the 7x1 row vector of raw class
+counts is simplified to a 2x1 vector [healthy, parasites], where parasites include all
+asexual life stages.
+
+The error in each transformation matrix term is based on the standard deviation of the m and b
+values from the linear fit.
 """
 
 import numpy as np
 import numpy.typing as npt
 import pandas as pd
 
-from typing import List, Tuple, Union
+from typing import Tuple, Union
 from pathlib import Path
 
 from stats_utils.constants import (
@@ -39,15 +46,19 @@ class CountCompensator(CountCorrector):
         Input(s)
         - model_name:
             Include name and number (eg. "frightful-wendigo-1931")
+        - conf_thresh:
+            The confidence threshold defines the required model confidence to accept a class call.
+            Compensation using y = mx + b fit was computed for multiple thresholds, input the
+            desired threshold to extract the corresponding m and b values
         - clinical (optional):
             True for clinical Uganda data (default)
             False for cultured lab data
         - heatmaps (optional):
-            True for heatmap nuked data
+            True for heatmap corrected data
             False otherwise (default)
         - skip (optional):
-            True to skip compensation (will ignore previous clinical and heatmap args in)
-            False to proceed with normal compensation, according to other args in(default)
+            True to skip compensation and compute parasitemia and error from raw data only.
+            False to proceed with compensation (default)
         """
 
         self.conf_thresh = conf_thresh
@@ -99,11 +110,10 @@ class CountCompensator(CountCorrector):
         self, compensation_csv_dir: str
     ) -> Tuple[float, float, float, float]:
         """
-        Extract fit metrics from csv
+        Extract fit metrics for a given confidence threshold from .csv
 
         Returns fit metrics as (m, b, cov_m, cov_b)
         """
-
         df = pd.read_csv(compensation_csv_dir, dtype=np.float64)
         row = df.loc[df["conf_val"] == self.conf_thresh]
 
@@ -115,9 +125,7 @@ class CountCompensator(CountCorrector):
 
     def _get_matrix(self, m: float, b: float) -> npt.NDArray:
         """
-        Return inverse 2x2 confusion matrix
-
-        See supplementary materials for derivation
+        Return transformation matrix equivalent of y = mx + b
         """
         M12 = -b
         M22 = (1 / m) - b
@@ -129,9 +137,7 @@ class CountCompensator(CountCorrector):
 
     def _get_matrix_std(self, cov_m: float, cov_b: float) -> npt.NDArray:
         """
-        Return standard deviations inverse 2x2 confusion matrix
-
-        See supplementary materials for derivation
+        Return standard deviation of transformation matrix
         """
         M11 = cov_b
         M12 = cov_b
@@ -143,10 +149,8 @@ class CountCompensator(CountCorrector):
 
     def _reformat_7x1_to_2x1(self, counts: npt.NDArray) -> npt.NDArray:
         """
-        Reformats array into a format compatible with CountCompensator
-
-        Takes in a 7x1 np array which includes all YOGO classes
-        Outputs 2x1 np array with [healthy, parasites] only
+        Reformats a 7x1 np array with all YOGO classes into a 2x1 np array
+        with [healthy, parasites] only
         """
         healthy = counts[YOGO_CLASS_IDX_MAP["healthy"]]
         parasites = np.sum(counts[ASEXUAL_PARASITE_CLASS_IDS])
@@ -155,7 +159,8 @@ class CountCompensator(CountCorrector):
 
     def calc_parasitemia(self, counts: npt.NDArray) -> float:
         """
-        Wrapper for CountCorrector's internal function _calc_parasitemia()
+        Wrapper for base class method _calc_parasitemia(), computes parasitemia
+        without compensation
 
         Reformats 7x1 array into required 2x1 array before computing statistics
 
@@ -171,7 +176,8 @@ class CountCompensator(CountCorrector):
         self, raw_counts: npt.NDArray, units_ul_out: bool = False
     ) -> Tuple[float, float]:
         """
-        Wrapper for CountCorrector's internal function _get_res_from_counts()
+        Wrapper for base class method _get_res_from_counts(), returns compensated
+        parasitemia and corresponding 95% confidence bounds
 
         Reformats 7x1 array into required 2x1 array before computing statistics
 
@@ -194,15 +200,14 @@ class CountCompensator(CountCorrector):
         units_ul_out: bool = False,
     ) -> Tuple[float, float]:
         """
-        Return compensated parasitemia and 95% confidence bound based on raw parasitemia and total rbcs
-
-        See remoscope manuscript for full derivation
+        Return compensated parasitemia and 95% confidence bounds based on raw parasitemia and
+        total rbcs
 
         Input(s)
         - raw_parasitemia:
             Uncorrected parasitemia estimate, given as fractional percentage
         - rbcs:
-            Total count of rbcs
+            RBC count, includes healthy cells and asexual parasite life stages
         - units_ul_in:
             True if raw_parasitemia is in parasites/uL
             False if raw_parasitemia is in fractional percentage
