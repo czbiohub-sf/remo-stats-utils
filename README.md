@@ -1,6 +1,5 @@
 # Statistics utils
-This repo contains the statistical analysis tools used to compute uncertainty estimates for Remoscope data. The calculations are used both on the Remoscope instrument as well as 
-See Supplementary Note 2 in the Remoscope preprint for analytical expressions of the calculations: 
+This repo contains the statistical analysis tools used to compute uncertainty estimates for Remoscope data. The calculations are used both on the Remoscope instrument as well as Supplementary Note 2 in the Remoscope preprint for analytical expressions of the calculations: 
 
 ![image](https://github.com/user-attachments/assets/0cfd37a6-c543-4873-9a64-bd2e5f8506b7)
 
